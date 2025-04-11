@@ -9,7 +9,177 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      admins: {
+        Row: {
+          created_at: string | null
+          email: string
+          id: string
+          password: string
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          id?: string
+          password: string
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          id?: string
+          password?: string
+        }
+        Relationships: []
+      }
+      bookings: {
+        Row: {
+          checkin_date: string
+          checkout_date: string
+          created_at: string | null
+          email: string
+          guests: string
+          id: string
+          name: string
+          phone: string | null
+          room_type: string | null
+          special_requests: string | null
+          status: string | null
+        }
+        Insert: {
+          checkin_date: string
+          checkout_date: string
+          created_at?: string | null
+          email: string
+          guests: string
+          id?: string
+          name: string
+          phone?: string | null
+          room_type?: string | null
+          special_requests?: string | null
+          status?: string | null
+        }
+        Update: {
+          checkin_date?: string
+          checkout_date?: string
+          created_at?: string | null
+          email?: string
+          guests?: string
+          id?: string
+          name?: string
+          phone?: string | null
+          room_type?: string | null
+          special_requests?: string | null
+          status?: string | null
+        }
+        Relationships: []
+      }
+      gallery: {
+        Row: {
+          category: string
+          created_at: string | null
+          id: string
+          title: string
+          title_pt: string
+          url: string
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          id?: string
+          title: string
+          title_pt: string
+          url: string
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          id?: string
+          title?: string
+          title_pt?: string
+          url?: string
+        }
+        Relationships: []
+      }
+      rooms: {
+        Row: {
+          amenities: Json
+          amenities_pt: Json
+          capacity: string
+          capacity_pt: string
+          created_at: string | null
+          description: string
+          description_pt: string
+          id: string
+          image: string
+          price: number
+          title: string
+          title_pt: string
+          updated_at: string | null
+        }
+        Insert: {
+          amenities: Json
+          amenities_pt: Json
+          capacity: string
+          capacity_pt: string
+          created_at?: string | null
+          description: string
+          description_pt: string
+          id?: string
+          image: string
+          price: number
+          title: string
+          title_pt: string
+          updated_at?: string | null
+        }
+        Update: {
+          amenities?: Json
+          amenities_pt?: Json
+          capacity?: string
+          capacity_pt?: string
+          created_at?: string | null
+          description?: string
+          description_pt?: string
+          id?: string
+          image?: string
+          price?: number
+          title?: string
+          title_pt?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      services: {
+        Row: {
+          created_at: string | null
+          description: string
+          description_pt: string
+          icon: string
+          id: string
+          title: string
+          title_pt: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description: string
+          description_pt: string
+          icon: string
+          id?: string
+          title: string
+          title_pt: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string
+          description_pt?: string
+          icon?: string
+          id?: string
+          title?: string
+          title_pt?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

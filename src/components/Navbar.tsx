@@ -1,108 +1,120 @@
 
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { Menu, X } from 'lucide-react';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
+  const { t } = useLanguage();
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 50) {
-        setScrolled(true);
+      if (window.scrollY > 10) {
+        setIsScrolled(true);
       } else {
-        setScrolled(false);
+        setIsScrolled(false);
       }
     };
-
-    window.addEventListener("scroll", handleScroll);
+    
+    window.addEventListener('scroll', handleScroll);
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener('scroll', handleScroll);
     };
   }, []);
 
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
-  };
+  // Close mobile menu when navigating to a new page
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [location.pathname]);
+
+  const navLinks = [
+    { title: "Home", title_pt: "Início", path: "/" },
+    { title: "Rooms", title_pt: "Quartos", path: "/rooms" },
+    { title: "Services", title_pt: "Serviços", path: "/services" },
+    { title: "Gallery", title_pt: "Galeria", path: "/gallery" },
+    { title: "Contact", title_pt: "Contato", path: "/contact" },
+  ];
 
   return (
-    <header
+    <header 
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-white shadow-md py-2"
-          : "bg-transparent py-4"
+        isScrolled ? 'bg-white text-hotel-text shadow-md py-4' : 'bg-transparent text-white py-6'
       }`}
     >
-      <div className="container mx-auto flex justify-between items-center">
-        <Link to="/" className="z-50">
-          <div className="flex items-center">
-            <span className={`text-2xl font-bold font-serif ${scrolled ? "text-hotel-text" : "text-white"}`}>
-              NEW HOTEL
-            </span>
-          </div>
+      <div className="container mx-auto px-4 flex justify-between items-center">
+        {/* Logo */}
+        <Link to="/" className="text-2xl font-bold flex items-center">
+          New Hotel
         </Link>
-
+        
         {/* Desktop Navigation */}
-        <nav className="hidden lg:flex space-x-8">
-          {["Home", "Rooms", "Services", "Facilities", "Gallery", "Contact"].map((item) => (
-            <Link
-              key={item}
-              to={item === "Home" ? "/" : `/${item.toLowerCase()}`}
-              className={`font-medium text-sm hover:text-hotel transition-colors ${
-                scrolled ? "text-hotel-text" : "text-white"
+        <nav className="hidden md:flex items-center space-x-8">
+          {navLinks.map((link) => (
+            <Link 
+              key={link.path} 
+              to={link.path}
+              className={`font-medium hover:text-hotel transition-colors ${
+                location.pathname === link.path ? 'text-hotel' : ''
               }`}
             >
-              {item.toUpperCase()}
+              {t(link.title, link.title_pt)}
             </Link>
           ))}
-          <Link
-            to="/book-now"
-            className={`font-medium text-sm px-4 py-2 rounded border-2 transition-colors ${
-              scrolled
-                ? "text-hotel border-hotel hover:bg-hotel hover:text-white"
-                : "text-white border-white hover:bg-white hover:text-hotel-text"
+          <Link 
+            to="/rooms" 
+            className={`py-2 px-4 rounded-md ${
+              isScrolled 
+                ? 'bg-hotel text-white hover:bg-hotel-dark' 
+                : 'bg-white/10 backdrop-blur-sm hover:bg-white/20'
+            } transition-colors`}
+          >
+            {t("Book Now", "Reserve Agora")}
+          </Link>
+          <LanguageSwitcher />
+        </nav>
+        
+        {/* Mobile Menu Button */}
+        <div className="flex items-center md:hidden space-x-4">
+          <LanguageSwitcher />
+          <button 
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className={`p-2 rounded-md ${
+              isScrolled ? 'text-hotel-text hover:bg-gray-100' : 'text-white hover:bg-white/10'
             }`}
           >
-            BOOK NOW
-          </Link>
-        </nav>
-
-        {/* Mobile Menu Button */}
-        <button
-          onClick={toggleMenu}
-          className={`lg:hidden z-50 ${scrolled || isOpen ? "text-hotel-text" : "text-white"}`}
-        >
-          {isOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
-      </div>
-
-      {/* Mobile Menu */}
-      <div
-        className={`fixed inset-0 bg-white z-40 flex flex-col p-10 transition-transform duration-300 ease-in-out lg:hidden ${
-          isOpen ? "transform translate-x-0" : "transform -translate-x-full"
-        }`}
-      >
-        <div className="flex flex-col space-y-6 mt-16">
-          {["Home", "Rooms", "Services", "Facilities", "Gallery", "Contact"].map((item) => (
-            <Link
-              key={item}
-              to={item === "Home" ? "/" : `/${item.toLowerCase()}`}
-              className="text-hotel-text text-lg font-medium hover:text-hotel transition-colors"
-              onClick={toggleMenu}
-            >
-              {item}
-            </Link>
-          ))}
-          <Link
-            to="/book-now"
-            className="bg-hotel text-white font-medium px-6 py-3 rounded text-center hover:bg-hotel-dark transition-colors mt-4"
-            onClick={toggleMenu}
-          >
-            BOOK NOW
-          </Link>
+            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
         </div>
       </div>
+      
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <div className="md:hidden bg-white text-hotel-text py-4 shadow-md">
+          <nav className="container mx-auto px-4 flex flex-col space-y-4">
+            {navLinks.map((link) => (
+              <Link 
+                key={link.path} 
+                to={link.path}
+                className={`py-2 font-medium ${
+                  location.pathname === link.path ? 'text-hotel' : 'hover:text-hotel'
+                }`}
+              >
+                {t(link.title, link.title_pt)}
+              </Link>
+            ))}
+            <Link 
+              to="/rooms" 
+              className="py-2 px-4 bg-hotel text-white rounded-md text-center hover:bg-hotel-dark transition-colors"
+            >
+              {t("Book Now", "Reserve Agora")}
+            </Link>
+          </nav>
+        </div>
+      )}
     </header>
   );
 };
