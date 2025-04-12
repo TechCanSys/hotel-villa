@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { useToast } from '@/components/ui/use-toast';
+import { Json } from '@/integrations/supabase/types';
 
 type Room = {
   id: string;
@@ -58,7 +59,14 @@ const AdminRooms = () => {
 
       if (error) throw error;
       
-      setRooms(data || []);
+      // Transform the data to match the Room type
+      const transformedRooms = data?.map(room => ({
+        ...room,
+        amenities: Array.isArray(room.amenities) ? room.amenities : [String(room.amenities)],
+        amenities_pt: Array.isArray(room.amenities_pt) ? room.amenities_pt : [String(room.amenities_pt)]
+      })) || [];
+      
+      setRooms(transformedRooms);
     } catch (error: any) {
       toast({
         title: t("Error", "Erro"),

@@ -3,8 +3,11 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 
+// Define the valid table names
+type TableName = 'admins' | 'bookings' | 'gallery' | 'rooms' | 'services';
+
 // Generic hook for fetching data
-export const useFetchData = <T,>(tableName: string, options = {}) => {
+export const useFetchData = <T,>(tableName: TableName, options = {}) => {
   const [data, setData] = useState<T[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
