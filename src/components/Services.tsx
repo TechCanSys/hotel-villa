@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from 'react';
-import { Utensils, Wine, ShowerHead, Users, Pool, DollarSign } from 'lucide-react';
+import { Utensils, Wine, ShowerHead, Users, Waves, DollarSign } from 'lucide-react';
 import { useFetchData } from '@/hooks/useSupabase';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -25,7 +24,7 @@ const getServiceIcon = (iconName: string) => {
     case 'Wine': return <Wine size={28} />;
     case 'ShowerHead': return <ShowerHead size={28} />;
     case 'Users': return <Users size={28} />;
-    case 'Pool': return <Pool size={28} />;
+    case 'Pool': return <Waves size={28} />;
     case 'DollarSign': return <DollarSign size={28} />;
     default: return <Utensils size={28} />;
   }
@@ -41,13 +40,11 @@ const Services = () => {
     const fetchExchangeRate = async () => {
       try {
         setIsLoadingRate(true);
-        // Using a free API for MZN to USD conversion
         const response = await fetch('https://open.er-api.com/v6/latest/MZN');
         const data = await response.json();
         setExchangeRate(data.rates.USD);
       } catch (error) {
         console.error('Error fetching exchange rate:', error);
-        // Fallback rate if API fails
         setExchangeRate(0.016);
       } finally {
         setIsLoadingRate(false);
@@ -57,7 +54,6 @@ const Services = () => {
     fetchExchangeRate();
   }, []);
 
-  // Format currency in Metical
   const formatMZN = (amount: number) => {
     return new Intl.NumberFormat('pt-MZ', { 
       style: 'currency', 
@@ -67,7 +63,6 @@ const Services = () => {
     }).format(amount);
   };
 
-  // Format currency in USD
   const formatUSD = (amount: number) => {
     if (!exchangeRate) return '';
     
@@ -80,7 +75,6 @@ const Services = () => {
     }).format(usdAmount);
   };
 
-  // Fallback data in case Supabase data isn't loaded yet
   const fallbackServices = [
     {
       id: '1',
@@ -120,7 +114,6 @@ const Services = () => {
     }
   ];
 
-  // Use Supabase data if available, otherwise use fallback
   const displayServices = services && services.length > 0 ? services : fallbackServices;
 
   return (

@@ -1,15 +1,8 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Plus, Pencil, Trash2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { useToast } from '@/components/ui/use-toast';
-import { Utensils, Wine, ShowerHead, Users, Pool, DollarSign } from 'lucide-react';
+import { Utensils, Wine, ShowerHead, Users, Waves, DollarSign } from 'lucide-react';
 
 type Service = {
   id: string;
@@ -26,7 +19,7 @@ const icons = [
   { name: 'Wine', component: <Wine size={20} /> },
   { name: 'ShowerHead', component: <ShowerHead size={20} /> },
   { name: 'Users', component: <Users size={20} /> },
-  { name: 'Pool', component: <Pool size={20} /> },
+  { name: 'Pool', component: <Waves size={20} /> },
   { name: 'DollarSign', component: <DollarSign size={20} /> }
 ];
 
@@ -131,13 +124,11 @@ const AdminServices = () => {
         description_pt: formData.description_pt
       };
 
-      // Add price if provided
       if (formData.price) {
         serviceData.price = parseInt(formData.price, 10);
       }
 
       if (editingService) {
-        // Update existing service
         const { error } = await supabase
           .from('services')
           .update(serviceData)
@@ -150,7 +141,6 @@ const AdminServices = () => {
           description: t("Service updated successfully", "Serviço atualizado com sucesso"),
         });
       } else {
-        // Add new service
         const { error } = await supabase
           .from('services')
           .insert([serviceData]);
@@ -205,7 +195,6 @@ const AdminServices = () => {
     return icon ? icon.component : <Utensils size={20} />;
   };
 
-  // Format currency in Metical
   const formatMZN = (amount: number) => {
     return new Intl.NumberFormat('pt-MZ', { 
       style: 'currency', 
@@ -273,7 +262,6 @@ const AdminServices = () => {
         </Table>
       )}
       
-      {/* Add/Edit Service Dialog */}
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
         <DialogContent>
           <DialogHeader>
