@@ -4,4 +4,4 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://www.newhotel.co.mz/sitemap.xml
+Sitemap: https://www.hotelvillacapricho.pt/sitemap.xml

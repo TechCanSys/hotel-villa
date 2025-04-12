@@ -48,7 +48,7 @@ const Navbar = () => {
       <div className="container mx-auto px-4 flex justify-between items-center">
         {/* Logo */}
         <Link to="/" className="text-2xl font-bold flex items-center">
-          New Hotel
+          Hotel Villa Capricho
         </Link>
         
         {/* Desktop Navigation */}
@@ -78,6 +78,7 @@ const Navbar = () => {
             to="/admin" 
             className="text-gray-400 hover:text-hotel transition-colors"
             title={t("Admin Login", "Login de Administrador")}
+            aria-label={t("Admin Login", "Login de Administrador")}
           >
             <Lock size={20} />
           </Link>
@@ -91,6 +92,7 @@ const Navbar = () => {
             to="/admin" 
             className="text-gray-400 hover:text-hotel transition-colors mr-2"
             title={t("Admin Login", "Login de Administrador")}
+            aria-label={t("Admin Login", "Login de Administrador")}
           >
             <Lock size={20} />
           </Link>
@@ -99,6 +101,7 @@ const Navbar = () => {
             className={`p-2 rounded-md ${
               isScrolled ? 'text-hotel-text hover:bg-gray-100' : 'text-white hover:bg-white/10'
             }`}
+            aria-label={isMenuOpen ? t("Close menu", "Fechar menu") : t("Open menu", "Abrir menu")}
           >
             {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
