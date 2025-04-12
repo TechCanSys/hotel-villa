@@ -8,6 +8,8 @@ import AdminGallery from '@/components/admin/AdminGallery';
 import AdminBookings from '@/components/admin/AdminBookings';
 import { AdminSidebar } from '@/components/admin/navigation/AdminSidebar';
 import { DashboardOverview } from '@/components/admin/dashboard/DashboardOverview';
+import { ArrowLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const AdminDashboard = () => {
   const { isAdmin, isLoading } = useAdminAuth();
@@ -41,6 +43,10 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleGoBack = () => {
+    navigate('/');
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -53,6 +59,16 @@ const AdminDashboard = () => {
     <div className="flex min-h-screen bg-gray-100">
       <AdminSidebar activeSection={activeSection} setActiveSection={setActiveSection} />
       <main className="flex-1 p-8">
+        <div className="flex items-center mb-6">
+          <Button 
+            variant="outline" 
+            className="mr-4"
+            onClick={handleGoBack}
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Site
+          </Button>
+          <h1 className="text-2xl font-bold">Admin Dashboard</h1>
+        </div>
         {renderSection()}
       </main>
     </div>
