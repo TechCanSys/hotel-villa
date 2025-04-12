@@ -2,7 +2,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAdminAuth } from '@/hooks/useSupabase';
-import { Bed, Image, Settings, LogOut, Coffee, CalendarClock } from 'lucide-react';
+import { Bed, Image, Settings, LogOut, Coffee, CalendarClock, Gauge, DollarSign } from 'lucide-react';
 import { MenuItem } from './MenuItem';
 
 interface AdminSidebarProps {
@@ -22,21 +22,34 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
     logout();
     navigate('/admin');
   };
+
+  const pendingBookings = 5; // This would come from a real API in production
   
   return (
-    <aside className="w-64 bg-white shadow-md">
-      <div className="p-6">
+    <aside className="w-64 bg-white shadow-md flex flex-col h-screen">
+      <div className="p-6 border-b">
         <h2 className="text-2xl font-bold text-hotel-text">{t("Admin Panel", "Painel Admin")}</h2>
+        <p className="text-sm text-gray-500 mt-1">{t("Hotel Management", "Gestão do Hotel")}</p>
       </div>
-      <nav className="mt-6">
+      <nav className="flex-1 overflow-y-auto py-4">
         <MenuItem 
-          icon={<Settings size={20} />} 
+          icon={<Gauge size={20} />} 
           label={t("Dashboard", "Painel")} 
           isActive={activeSection === 'dashboard'} 
           onClick={() => {
             setActiveSection('dashboard');
             navigate('/admin/dashboard');
           }}
+        />
+        <MenuItem 
+          icon={<CalendarClock size={20} />} 
+          label={t("Bookings", "Reservas")} 
+          isActive={activeSection === 'bookings'} 
+          onClick={() => {
+            setActiveSection('bookings');
+            navigate('/admin/bookings');
+          }}
+          badge={pendingBookings}
         />
         <MenuItem 
           icon={<Bed size={20} />} 
@@ -66,24 +79,33 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
           }}
         />
         <MenuItem 
-          icon={<CalendarClock size={20} />} 
-          label={t("Bookings", "Reservas")} 
-          isActive={activeSection === 'bookings'} 
+          icon={<DollarSign size={20} />} 
+          label={t("Pricing", "Preços")} 
+          isActive={activeSection === 'pricing'} 
           onClick={() => {
-            setActiveSection('bookings');
-            navigate('/admin/bookings');
+            setActiveSection('pricing');
+            navigate('/admin/pricing');
           }}
         />
-        <div className="mt-auto pt-6">
-          <button
-            onClick={handleLogout}
-            className="flex items-center px-6 py-3 text-gray-500 hover:bg-gray-100 hover:text-hotel w-full"
-          >
-            <LogOut size={20} className="mr-3" />
-            <span>{t("Logout", "Sair")}</span>
-          </button>
-        </div>
+        <MenuItem 
+          icon={<Settings size={20} />} 
+          label={t("Settings", "Configurações")} 
+          isActive={activeSection === 'settings'} 
+          onClick={() => {
+            setActiveSection('settings');
+            navigate('/admin/settings');
+          }}
+        />
       </nav>
+      <div className="p-4 border-t mt-auto">
+        <button
+          onClick={handleLogout}
+          className="flex items-center text-gray-500 hover:bg-gray-100 hover:text-hotel w-full p-3 rounded-md transition-colors"
+        >
+          <LogOut size={20} className="mr-3" />
+          <span>{t("Logout", "Sair")}</span>
+        </button>
+      </div>
     </aside>
   );
 };

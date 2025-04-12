@@ -1,5 +1,6 @@
 
-import { Utensils, Wine, Car, Wifi, MapPin, Coffee } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Utensils, Wine, ShowerHead, Users, Pool, DollarSign } from 'lucide-react';
 import { useFetchData } from '@/hooks/useSupabase';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -10,16 +11,22 @@ type Service = {
   title_pt: string;
   description: string;
   description_pt: string;
+  price?: number;
+};
+
+type ExchangeRate = {
+  rate: number;
+  timestamp: number;
 };
 
 const getServiceIcon = (iconName: string) => {
   switch (iconName) {
     case 'Utensils': return <Utensils size={28} />;
     case 'Wine': return <Wine size={28} />;
-    case 'Car': return <Car size={28} />;
-    case 'Wifi': return <Wifi size={28} />;
-    case 'MapPin': return <MapPin size={28} />;
-    case 'Coffee': return <Coffee size={28} />;
+    case 'ShowerHead': return <ShowerHead size={28} />;
+    case 'Users': return <Users size={28} />;
+    case 'Pool': return <Pool size={28} />;
+    case 'DollarSign': return <DollarSign size={28} />;
     default: return <Utensils size={28} />;
   }
 };
@@ -27,56 +34,89 @@ const getServiceIcon = (iconName: string) => {
 const Services = () => {
   const { language, t } = useLanguage();
   const { data: services, isLoading } = useFetchData<Service>('services');
+  const [exchangeRate, setExchangeRate] = useState<number | null>(null);
+  const [isLoadingRate, setIsLoadingRate] = useState<boolean>(false);
+
+  useEffect(() => {
+    const fetchExchangeRate = async () => {
+      try {
+        setIsLoadingRate(true);
+        // Using a free API for MZN to USD conversion
+        const response = await fetch('https://open.er-api.com/v6/latest/MZN');
+        const data = await response.json();
+        setExchangeRate(data.rates.USD);
+      } catch (error) {
+        console.error('Error fetching exchange rate:', error);
+        // Fallback rate if API fails
+        setExchangeRate(0.016);
+      } finally {
+        setIsLoadingRate(false);
+      }
+    };
+
+    fetchExchangeRate();
+  }, []);
+
+  // Format currency in Metical
+  const formatMZN = (amount: number) => {
+    return new Intl.NumberFormat('pt-MZ', { 
+      style: 'currency', 
+      currency: 'MZN',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(amount);
+  };
+
+  // Format currency in USD
+  const formatUSD = (amount: number) => {
+    if (!exchangeRate) return '';
+    
+    const usdAmount = amount * exchangeRate;
+    return new Intl.NumberFormat('en-US', { 
+      style: 'currency', 
+      currency: 'USD',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(usdAmount);
+  };
 
   // Fallback data in case Supabase data isn't loaded yet
   const fallbackServices = [
     {
       id: '1',
       icon: 'Utensils',
-      title: "Fine Dining",
-      title_pt: "Gastronomia Refinada",
-      description: "Exquisite culinary experiences featuring local and international cuisine prepared by our world-class chefs.",
-      description_pt: "Experiências culinárias requintadas com cozinha local e internacional preparada pelos nossos chefs de classe mundial."
+      title: "Restaurant & Bar",
+      title_pt: "Restaurante & Bar",
+      description: "Experience exquisite dining and refreshing drinks at our elegant restaurant and bar.",
+      description_pt: "Experimente uma refeição requintada e bebidas refrescantes no nosso elegante restaurante e bar.",
+      price: 500
     },
     {
       id: '2',
-      icon: 'Wifi',
-      title: "Free Wi-Fi",
-      title_pt: "Wi-Fi Gratuito",
-      description: "Stay connected with complimentary high-speed internet access throughout the entire hotel.",
-      description_pt: "Mantenha-se conectado com acesso gratuito à internet de alta velocidade em todo o hotel."
+      icon: 'ShowerHead',
+      title: "Laundry Service",
+      title_pt: "Serviço de Lavandaria",
+      description: "Keep your clothes fresh and clean with our premium laundry service available daily.",
+      description_pt: "Mantenha suas roupas frescas e limpas com o nosso serviço de lavandaria premium disponível diariamente.",
+      price: 300
     },
     {
       id: '3',
-      icon: 'Car',
-      title: "Airport Transfer",
-      title_pt: "Transporte para o Aeroporto",
-      description: "Enjoy convenient and comfortable transportation to and from the airport with our dedicated shuttle service.",
-      description_pt: "Desfrute de transporte conveniente e confortável de e para o aeroporto com nosso serviço de shuttle dedicado."
+      icon: 'Users',
+      title: "Meeting Room",
+      title_pt: "Sala de Reuniões",
+      description: "Host your business meetings or events in our fully equipped meeting room with modern amenities.",
+      description_pt: "Realize suas reuniões de negócios ou eventos na nossa sala de reuniões totalmente equipada com comodidades modernas.",
+      price: 2000
     },
     {
       id: '4',
-      icon: 'Coffee',
-      title: "Breakfast",
-      title_pt: "Café da Manhã",
-      description: "Start your day with our delicious gourmet breakfast featuring a variety of fresh and healthy options.",
-      description_pt: "Comece o seu dia com o nosso delicioso café da manhã gourmet que apresenta uma variedade de opções frescas e saudáveis."
-    },
-    {
-      id: '5',
-      icon: 'Wine',
-      title: "Bar & Lounge",
-      title_pt: "Bar & Lounge",
-      description: "Relax and unwind in our elegant bar and lounge offering an extensive selection of fine wines and spirits.",
-      description_pt: "Relaxe no nosso elegante bar e lounge que oferece uma extensa seleção de vinhos finos e destilados."
-    },
-    {
-      id: '6',
-      icon: 'MapPin',
-      title: "City Tours",
-      title_pt: "Tours pela Cidade",
-      description: "Explore the beauty and culture of the surrounding area with our professionally guided city tours.",
-      description_pt: "Explore a beleza e a cultura da área ao redor com os nossos tours pela cidade profissionalmente guiados."
+      icon: 'Pool',
+      title: "Swimming Pool",
+      title_pt: "Piscina",
+      description: "Relax and unwind in our luxurious swimming pool with comfortable loungers and pool service.",
+      description_pt: "Relaxe na nossa piscina luxuosa com espreguiçadeiras confortáveis e serviço de piscina.",
+      price: 150
     }
   ];
 
@@ -91,7 +131,7 @@ const Services = () => {
             {t("What We Offer", "O Que Oferecemos")}
           </span>
           <h2 className="text-3xl md:text-4xl font-bold mb-6 text-hotel-text">
-            {t("Exceptional Services", "Serviços Excepcionais")}
+            {t("Our Premium Services", "Nossos Serviços Premium")}
           </h2>
           <p className="text-gray-600">
             {t(
@@ -101,13 +141,26 @@ const Services = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
           {displayServices.map((service) => (
             <div 
               key={service.id} 
               className="bg-white p-8 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
             >
-              <div className="text-hotel mb-4">{getServiceIcon(service.icon)}</div>
+              <div className="flex justify-between items-start mb-4">
+                <div className="text-hotel">{getServiceIcon(service.icon)}</div>
+                {service.price && (
+                  <div className="text-right">
+                    <div className="text-xl font-bold text-hotel">{formatMZN(service.price)}</div>
+                    {exchangeRate && (
+                      <div className="text-sm text-gray-500">
+                        {isLoadingRate ? 'Loading...' : formatUSD(service.price)}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+              
               <h3 className="text-xl font-bold mb-3 text-hotel-text">
                 {language === 'en' ? service.title : service.title_pt}
               </h3>

@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Lock } from 'lucide-react';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -52,7 +52,7 @@ const Navbar = () => {
         </Link>
         
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-8">
+        <nav className="hidden md:flex items-center space-x-6">
           {navLinks.map((link) => (
             <Link 
               key={link.path} 
@@ -74,12 +74,26 @@ const Navbar = () => {
           >
             {t("Book Now", "Reserve Agora")}
           </Link>
+          <Link 
+            to="/admin" 
+            className="text-gray-400 hover:text-hotel transition-colors"
+            title={t("Admin Login", "Login de Administrador")}
+          >
+            <Lock size={20} />
+          </Link>
           <LanguageSwitcher />
         </nav>
         
         {/* Mobile Menu Button */}
         <div className="flex items-center md:hidden space-x-4">
           <LanguageSwitcher />
+          <Link 
+            to="/admin" 
+            className="text-gray-400 hover:text-hotel transition-colors mr-2"
+            title={t("Admin Login", "Login de Administrador")}
+          >
+            <Lock size={20} />
+          </Link>
           <button 
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className={`p-2 rounded-md ${

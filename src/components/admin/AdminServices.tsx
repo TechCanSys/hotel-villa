@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { useToast } from '@/components/ui/use-toast';
-import { Utensils, Wine, Car, Wifi, MapPin, Coffee } from 'lucide-react';
+import { Utensils, Wine, ShowerHead, Users, Pool, DollarSign } from 'lucide-react';
 
 type Service = {
   id: string;
@@ -18,15 +18,16 @@ type Service = {
   title_pt: string;
   description: string;
   description_pt: string;
+  price?: number;
 };
 
 const icons = [
   { name: 'Utensils', component: <Utensils size={20} /> },
   { name: 'Wine', component: <Wine size={20} /> },
-  { name: 'Car', component: <Car size={20} /> },
-  { name: 'Wifi', component: <Wifi size={20} /> },
-  { name: 'MapPin', component: <MapPin size={20} /> },
-  { name: 'Coffee', component: <Coffee size={20} /> }
+  { name: 'ShowerHead', component: <ShowerHead size={20} /> },
+  { name: 'Users', component: <Users size={20} /> },
+  { name: 'Pool', component: <Pool size={20} /> },
+  { name: 'DollarSign', component: <DollarSign size={20} /> }
 ];
 
 const AdminServices = () => {
@@ -40,7 +41,8 @@ const AdminServices = () => {
     title: '',
     title_pt: '',
     description: '',
-    description_pt: ''
+    description_pt: '',
+    price: ''
   });
   const { toast } = useToast();
 
@@ -85,7 +87,8 @@ const AdminServices = () => {
       title: '',
       title_pt: '',
       description: '',
-      description_pt: ''
+      description_pt: '',
+      price: ''
     });
     setShowDialog(true);
   };
@@ -97,7 +100,8 @@ const AdminServices = () => {
       title: service.title,
       title_pt: service.title_pt,
       description: service.description,
-      description_pt: service.description_pt
+      description_pt: service.description_pt,
+      price: service.price?.toString() || ''
     });
     setShowDialog(true);
   };
@@ -119,13 +123,18 @@ const AdminServices = () => {
         return;
       }
 
-      const serviceData = {
+      const serviceData: any = {
         icon: formData.icon,
         title: formData.title,
         title_pt: formData.title_pt,
         description: formData.description,
         description_pt: formData.description_pt
       };
+
+      // Add price if provided
+      if (formData.price) {
+        serviceData.price = parseInt(formData.price, 10);
+      }
 
       if (editingService) {
         // Update existing service
@@ -196,6 +205,16 @@ const AdminServices = () => {
     return icon ? icon.component : <Utensils size={20} />;
   };
 
+  // Format currency in Metical
+  const formatMZN = (amount: number) => {
+    return new Intl.NumberFormat('pt-MZ', { 
+      style: 'currency', 
+      currency: 'MZN',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(amount);
+  };
+
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
@@ -217,13 +236,14 @@ const AdminServices = () => {
               <TableHead>{t("Icon", "Ícone")}</TableHead>
               <TableHead>{t("Title", "Título")}</TableHead>
               <TableHead>{t("Title (PT)", "Título (PT)")}</TableHead>
+              <TableHead>{t("Price", "Preço")}</TableHead>
               <TableHead className="text-right">{t("Actions", "Ações")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {services.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={4} className="text-center py-4 text-gray-500">
+                <TableCell colSpan={5} className="text-center py-4 text-gray-500">
                   {t("No services found", "Nenhum serviço encontrado")}
                 </TableCell>
               </TableRow>
@@ -237,6 +257,7 @@ const AdminServices = () => {
                   </TableCell>
                   <TableCell className="font-medium">{service.title}</TableCell>
                   <TableCell>{service.title_pt}</TableCell>
+                  <TableCell>{service.price ? formatMZN(service.price) : '-'}</TableCell>
                   <TableCell className="text-right">
                     <Button variant="ghost" size="sm" onClick={() => openEditDialog(service)}>
                       <Pencil size={16} />
@@ -283,7 +304,7 @@ const AdminServices = () => {
               </select>
             </div>
             
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <div className="flex flex-col space-y-2">
                   <label htmlFor="title" className="font-medium text-sm">
@@ -335,6 +356,23 @@ const AdminServices = () => {
                   />
                 </div>
               </div>
+            </div>
+
+            <div className="flex flex-col space-y-2">
+              <label htmlFor="price" className="font-medium text-sm">
+                {t("Price (MZN)", "Preço (MZN)")}
+              </label>
+              <Input
+                id="price"
+                name="price"
+                type="number"
+                placeholder="0"
+                value={formData.price}
+                onChange={handleInputChange}
+              />
+              <p className="text-xs text-gray-500">
+                {t("Leave empty for services without a price", "Deixe vazio para serviços sem preço")}
+              </p>
             </div>
           </div>
           
