@@ -9,7 +9,7 @@ const Welcome = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="order-2 lg:order-1">
             <span className="text-hotel uppercase tracking-widest text-sm font-medium mb-4 block">
-              Welcome to New Hotel
+              Welcome to Hotel Villa Capricho
             </span>
             <h2 className="text-3xl md:text-4xl font-bold mb-6 text-hotel-text">
               Experience Luxury Like Never Before
