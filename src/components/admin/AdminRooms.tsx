@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -59,12 +58,15 @@ const AdminRooms = () => {
 
       if (error) throw error;
       
-      // Transform the data to match the Room type
       const transformedRooms = data?.map(room => ({
         ...room,
-        amenities: Array.isArray(room.amenities) ? room.amenities : [String(room.amenities)],
-        amenities_pt: Array.isArray(room.amenities_pt) ? room.amenities_pt : [String(room.amenities_pt)]
-      })) || [];
+        amenities: Array.isArray(room.amenities) 
+          ? room.amenities.map(item => String(item)) 
+          : [String(room.amenities)],
+        amenities_pt: Array.isArray(room.amenities_pt) 
+          ? room.amenities_pt.map(item => String(item)) 
+          : [String(room.amenities_pt)]
+      })) as Room[];
       
       setRooms(transformedRooms);
     } catch (error: any) {
@@ -156,7 +158,6 @@ const AdminRooms = () => {
       };
 
       if (editingRoom) {
-        // Update existing room
         const { error } = await supabase
           .from('rooms')
           .update(roomData)
@@ -169,7 +170,6 @@ const AdminRooms = () => {
           description: t("Room updated successfully", "Quarto atualizado com sucesso"),
         });
       } else {
-        // Add new room
         const { error } = await supabase
           .from('rooms')
           .insert([roomData]);
@@ -275,7 +275,6 @@ const AdminRooms = () => {
         </Table>
       )}
       
-      {/* Add/Edit Room Dialog */}
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
