@@ -37,7 +37,7 @@ const Welcome = () => {
                 className="rounded-lg shadow-xl w-full h-auto object-cover"
               />
               <div className="absolute bottom-6 right-6 bg-hotel p-6 text-white rounded-lg shadow-lg max-w-xs">
-                <p className="font-medium mb-2 text-lg">10+ Years</p>
+                <p className="font-medium mb-2 text-lg"></p>
                 <p className="text-sm opacity-90">Of exceptional service and hospitality excellence</p>
               </div>
             </div>
