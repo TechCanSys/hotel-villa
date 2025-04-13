@@ -50,6 +50,7 @@ export const useAdminLogin = () => {
   const login = async (email: string, password: string) => {
     try {
       setIsLoading(true);
+      console.log('Attempting login with:', { email });
       
       // Check if admin exists with this email
       const { data, error } = await supabase
@@ -58,18 +59,25 @@ export const useAdminLogin = () => {
         .eq('email', email)
         .limit(1); // Limit to one result
       
-      if (error) throw error;
+      if (error) {
+        console.error('Database error:', error);
+        throw error;
+      }
+      
+      console.log('Admin data retrieved:', data);
       
       // Check if any admin was found
       if (!data || data.length === 0) {
+        console.error('No admin found with this email');
         throw new Error('Invalid credentials');
       }
       
       const admin = data[0];
+      console.log('Admin found:', admin.email);
       
-      // In a real app, you would properly verify the password hash
-      // This is just a simplified example
-      if (admin && admin.password === password) {
+      // Direct password comparison
+      if (admin.password === password) {
+        console.log('Password match, login successful');
         // Store admin session in localStorage
         localStorage.setItem('adminSession', JSON.stringify({ 
           isAdmin: true, 
@@ -78,9 +86,11 @@ export const useAdminLogin = () => {
         }));
         return true;
       } else {
+        console.error('Password mismatch');
         throw new Error('Invalid credentials');
       }
     } catch (error: any) {
+      console.error('Login error:', error.message);
       toast({
         title: "Login failed",
         description: error.message,
