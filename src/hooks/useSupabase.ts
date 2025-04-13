@@ -57,7 +57,7 @@ export const useAdminLogin = () => {
         .from('admins')
         .select('*')
         .eq('email', email)
-        .limit(1); // Limit to one result
+        .limit(1);
       
       if (error) {
         console.error('Database error:', error);
