@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -12,18 +11,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { useToast } from '@/components/ui/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MediaUploader } from '@/components/admin/media/MediaUploader';
-
-type Service = {
-  id: string;
-  icon: string;
-  title: string;
-  title_pt: string;
-  description: string;
-  description_pt: string;
-  price?: number;
-  media?: string[];
-  videos?: string[];
-};
+import { Service } from '@/types/room';
+import { Json } from '@/integrations/supabase/types';
 
 const icons = [
   { name: 'Utensils', component: <Utensils size={20} /> },
@@ -69,9 +58,9 @@ const AdminServices = () => {
       
       const transformedServices = data?.map(service => ({
         ...service,
-        media: Array.isArray(service.media) ? service.media : [],
-        videos: Array.isArray(service.videos) ? service.videos : []
-      }));
+        media: Array.isArray(service.media) ? service.media.map(item => String(item)) : [],
+        videos: Array.isArray(service.videos) ? service.videos.map(item => String(item)) : []
+      })) as Service[];
       
       setServices(transformedServices || []);
     } catch (error: any) {

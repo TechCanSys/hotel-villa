@@ -31,3 +31,17 @@ export type RoomFormData = {
   media?: string[];
   videos?: string[];
 };
+
+// Type definition for services
+export type Service = {
+  id: string;
+  icon: string;
+  title: string;
+  title_pt: string;
+  description: string;
+  description_pt: string;
+  price?: number;
+  media?: string[];
+  videos?: string[];
+};
+

@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { Room, RoomFormData } from '@/types/room';
 import { Json } from '@/integrations/supabase/types';
@@ -19,8 +18,8 @@ export const fetchRooms = async (): Promise<Room[]> => {
     amenities_pt: Array.isArray(room.amenities_pt) 
       ? room.amenities_pt.map(item => String(item)) 
       : [String(room.amenities_pt)],
-    media: Array.isArray(room.media) ? room.media : [],
-    videos: Array.isArray(room.videos) ? room.videos : []
+    media: Array.isArray(room.media) ? room.media.map(item => String(item)) : [],
+    videos: Array.isArray(room.videos) ? room.videos.map(item => String(item)) : []
   })) as Room[];
   
   return transformedRooms;
