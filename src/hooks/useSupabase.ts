@@ -56,18 +56,25 @@ export const useAdminLogin = () => {
         .from('admins')
         .select('*')
         .eq('email', email)
-        .single();
+        .limit(1); // Limit to one result
       
       if (error) throw error;
       
+      // Check if any admin was found
+      if (!data || data.length === 0) {
+        throw new Error('Invalid credentials');
+      }
+      
+      const admin = data[0];
+      
       // In a real app, you would properly verify the password hash
       // This is just a simplified example
-      if (data && data.password.startsWith('$2a$10$')) {
+      if (admin && admin.password === password) {
         // Store admin session in localStorage
         localStorage.setItem('adminSession', JSON.stringify({ 
           isAdmin: true, 
-          email: data.email,
-          id: data.id
+          email: admin.email,
+          id: admin.id
         }));
         return true;
       } else {

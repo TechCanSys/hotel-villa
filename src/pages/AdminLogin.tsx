@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { ArrowLeft } from 'lucide-react';
 
 const AdminLogin = () => {
   const [email, setEmail] = useState('');
@@ -37,17 +38,29 @@ const AdminLogin = () => {
     }
   };
 
+  const handleGoBack = () => {
+    navigate('/');
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+        <div className="flex items-center justify-between">
+          <Button 
+            variant="ghost" 
+            onClick={handleGoBack}
+            className="flex items-center text-gray-600 hover:text-hotel"
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" /> 
+            {t("Back to Site", "Voltar ao Site")}
+          </Button>
+          <h2 className="text-2xl font-extrabold text-gray-900">
             {t("Admin Login", "Login de Administrador")}
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            {t("Sign in to access the admin dashboard", "Faça login para acessar o painel de administração")}
-          </p>
         </div>
+        <p className="mt-2 text-center text-sm text-gray-600">
+          {t("Sign in to access the admin dashboard", "Faça login para acessar o painel de administração")}
+        </p>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
