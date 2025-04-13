@@ -110,10 +110,12 @@ export type Database = {
           description_pt: string
           id: string
           image: string
+          media: Json | null
           price: number
           title: string
           title_pt: string
           updated_at: string | null
+          videos: Json | null
         }
         Insert: {
           amenities: Json
@@ -125,10 +127,12 @@ export type Database = {
           description_pt: string
           id?: string
           image: string
+          media?: Json | null
           price: number
           title: string
           title_pt: string
           updated_at?: string | null
+          videos?: Json | null
         }
         Update: {
           amenities?: Json
@@ -140,10 +144,12 @@ export type Database = {
           description_pt?: string
           id?: string
           image?: string
+          media?: Json | null
           price?: number
           title?: string
           title_pt?: string
           updated_at?: string | null
+          videos?: Json | null
         }
         Relationships: []
       }
@@ -154,9 +160,12 @@ export type Database = {
           description_pt: string
           icon: string
           id: string
+          media: Json | null
+          price: number | null
           title: string
           title_pt: string
           updated_at: string | null
+          videos: Json | null
         }
         Insert: {
           created_at?: string | null
@@ -164,9 +173,12 @@ export type Database = {
           description_pt: string
           icon: string
           id?: string
+          media?: Json | null
+          price?: number | null
           title: string
           title_pt: string
           updated_at?: string | null
+          videos?: Json | null
         }
         Update: {
           created_at?: string | null
@@ -174,9 +186,12 @@ export type Database = {
           description_pt?: string
           icon?: string
           id?: string
+          media?: Json | null
+          price?: number | null
           title?: string
           title_pt?: string
           updated_at?: string | null
+          videos?: Json | null
         }
         Relationships: []
       }

@@ -136,3 +136,83 @@ export const useAdminAuth = () => {
 
   return { isAdmin, isLoading, logout };
 };
+
+// New hook for handling file uploads
+export const useFileUpload = (bucketName: 'room_media' | 'service_media') => {
+  const { toast } = useToast();
+  const [isUploading, setIsUploading] = useState(false);
+  
+  const uploadFile = async (file: File, folder: string = '') => {
+    try {
+      setIsUploading(true);
+      
+      // Create a unique filename
+      const timestamp = new Date().getTime();
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${timestamp}-${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
+      const filePath = folder ? `${folder}/${fileName}` : fileName;
+      
+      // Upload the file
+      const { data, error } = await supabase.storage
+        .from(bucketName)
+        .upload(filePath, file);
+      
+      if (error) throw error;
+      
+      // Get the public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from(bucketName)
+        .getPublicUrl(filePath);
+      
+      return publicUrl;
+    } catch (error: any) {
+      console.error('Upload error:', error.message);
+      toast({
+        title: "Upload failed",
+        description: error.message,
+        variant: "destructive",
+      });
+      return null;
+    } finally {
+      setIsUploading(false);
+    }
+  };
+  
+  const uploadMultipleFiles = async (files: File[], folder: string = '') => {
+    const urls: string[] = [];
+    
+    for (const file of files) {
+      const url = await uploadFile(file, folder);
+      if (url) urls.push(url);
+    }
+    
+    return urls;
+  };
+  
+  const deleteFile = async (fileUrl: string) => {
+    try {
+      // Extract the file path from the URL
+      const url = new URL(fileUrl);
+      const pathnameParts = url.pathname.split('/');
+      const filePath = pathnameParts.slice(3).join('/'); // Skip /storage/v1/object/public/bucketName/
+      
+      const { error } = await supabase.storage
+        .from(bucketName)
+        .remove([filePath]);
+      
+      if (error) throw error;
+      
+      return true;
+    } catch (error: any) {
+      console.error('Delete error:', error.message);
+      toast({
+        title: "Delete failed",
+        description: error.message,
+        variant: "destructive",
+      });
+      return false;
+    }
+  };
+  
+  return { uploadFile, uploadMultipleFiles, deleteFile, isUploading };
+};

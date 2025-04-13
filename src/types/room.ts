@@ -13,6 +13,8 @@ export type Room = {
   capacity_pt: string;
   amenities: string[];
   amenities_pt: string[];
+  media?: string[];
+  videos?: string[];
 };
 
 export type RoomFormData = {
@@ -26,4 +28,6 @@ export type RoomFormData = {
   capacity_pt: string;
   amenities: string;
   amenities_pt: string;
+  media?: string[];
+  videos?: string[];
 };

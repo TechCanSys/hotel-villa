@@ -5,6 +5,7 @@ import { Room, RoomFormData } from '@/types/room';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
+import { MediaUploader } from '@/components/admin/media/MediaUploader';
 import {
   Dialog,
   DialogContent,
@@ -13,6 +14,7 @@ import {
   DialogFooter
 } from '@/components/ui/dialog';
 import { useToast } from '@/components/ui/use-toast';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface RoomFormDialogProps {
   open: boolean;
@@ -39,8 +41,11 @@ export const RoomFormDialog = ({
     capacity: '',
     capacity_pt: '',
     amenities: '',
-    amenities_pt: ''
+    amenities_pt: '',
+    media: [],
+    videos: []
   });
+  const [activeTab, setActiveTab] = useState('details');
 
   useEffect(() => {
     if (editingRoom) {
@@ -54,7 +59,9 @@ export const RoomFormDialog = ({
         capacity: editingRoom.capacity,
         capacity_pt: editingRoom.capacity_pt,
         amenities: editingRoom.amenities.join(', '),
-        amenities_pt: editingRoom.amenities_pt.join(', ')
+        amenities_pt: editingRoom.amenities_pt.join(', '),
+        media: editingRoom.media || [],
+        videos: editingRoom.videos || []
       });
     } else {
       setFormData({
@@ -67,16 +74,33 @@ export const RoomFormDialog = ({
         capacity: '',
         capacity_pt: '',
         amenities: '',
-        amenities_pt: ''
+        amenities_pt: '',
+        media: [],
+        videos: []
       });
     }
-  }, [editingRoom]);
+    setActiveTab('details');
+  }, [editingRoom, open]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
       [name]: name === 'price' ? Number(value) : value
+    });
+  };
+
+  const handleMediaChange = (urls: string[]) => {
+    setFormData({
+      ...formData,
+      media: urls
+    });
+  };
+
+  const handleVideosChange = (urls: string[]) => {
+    setFormData({
+      ...formData,
+      videos: urls
     });
   };
 
@@ -114,7 +138,7 @@ export const RoomFormDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
             {editingRoom 
@@ -123,142 +147,167 @@ export const RoomFormDialog = ({
           </DialogTitle>
         </DialogHeader>
         
-        <div className="grid grid-cols-2 gap-4 pt-4">
-          <div>
-            <h3 className="font-medium mb-2">{t("English", "Inglês")}</h3>
-            <div className="space-y-4">
-              <div className="flex flex-col space-y-2">
-                <label htmlFor="title" className="font-medium text-sm">
-                  {t("Title", "Título")} *
-                </label>
-                <Input
-                  id="title"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="flex flex-col space-y-2">
-                <label htmlFor="description" className="font-medium text-sm">
-                  {t("Description", "Descrição")} *
-                </label>
-                <Textarea
-                  id="description"
-                  name="description"
-                  rows={5}
-                  value={formData.description}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="flex flex-col space-y-2">
-                <label htmlFor="capacity" className="font-medium text-sm">
-                  {t("Capacity", "Capacidade")} *
-                </label>
-                <Input
-                  id="capacity"
-                  name="capacity"
-                  value={formData.capacity}
-                  onChange={handleInputChange}
-                  placeholder="e.g. 2 Adults"
-                />
-              </div>
-              <div className="flex flex-col space-y-2">
-                <label htmlFor="amenities" className="font-medium text-sm">
-                  {t("Amenities", "Comodidades")} * {t("(comma separated)", "(separado por vírgulas)")}
-                </label>
-                <Textarea
-                  id="amenities"
-                  name="amenities"
-                  value={formData.amenities}
-                  onChange={handleInputChange}
-                  placeholder="Free WiFi, Coffee Maker, Smart TV, Luxury Bathroom"
-                />
-              </div>
-            </div>
-          </div>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="w-full">
+            <TabsTrigger value="details" className="flex-1">
+              {t("Details", "Detalhes")}
+            </TabsTrigger>
+            <TabsTrigger value="media" className="flex-1">
+              {t("Media", "Mídia")}
+            </TabsTrigger>
+          </TabsList>
           
-          <div>
-            <h3 className="font-medium mb-2">{t("Portuguese", "Português")}</h3>
-            <div className="space-y-4">
+          <TabsContent value="details" className="pt-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <h3 className="font-medium mb-2">{t("English", "Inglês")}</h3>
+                <div className="space-y-4">
+                  <div className="flex flex-col space-y-2">
+                    <label htmlFor="title" className="font-medium text-sm">
+                      {t("Title", "Título")} *
+                    </label>
+                    <Input
+                      id="title"
+                      name="title"
+                      value={formData.title}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div className="flex flex-col space-y-2">
+                    <label htmlFor="description" className="font-medium text-sm">
+                      {t("Description", "Descrição")} *
+                    </label>
+                    <Textarea
+                      id="description"
+                      name="description"
+                      rows={5}
+                      value={formData.description}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div className="flex flex-col space-y-2">
+                    <label htmlFor="capacity" className="font-medium text-sm">
+                      {t("Capacity", "Capacidade")} *
+                    </label>
+                    <Input
+                      id="capacity"
+                      name="capacity"
+                      value={formData.capacity}
+                      onChange={handleInputChange}
+                      placeholder="e.g. 2 Adults"
+                    />
+                  </div>
+                  <div className="flex flex-col space-y-2">
+                    <label htmlFor="amenities" className="font-medium text-sm">
+                      {t("Amenities", "Comodidades")} * {t("(comma separated)", "(separado por vírgulas)")}
+                    </label>
+                    <Textarea
+                      id="amenities"
+                      name="amenities"
+                      value={formData.amenities}
+                      onChange={handleInputChange}
+                      placeholder="Free WiFi, Coffee Maker, Smart TV, Luxury Bathroom"
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              <div>
+                <h3 className="font-medium mb-2">{t("Portuguese", "Português")}</h3>
+                <div className="space-y-4">
+                  <div className="flex flex-col space-y-2">
+                    <label htmlFor="title_pt" className="font-medium text-sm">
+                      {t("Title", "Título")} *
+                    </label>
+                    <Input
+                      id="title_pt"
+                      name="title_pt"
+                      value={formData.title_pt}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div className="flex flex-col space-y-2">
+                    <label htmlFor="description_pt" className="font-medium text-sm">
+                      {t("Description", "Descrição")} *
+                    </label>
+                    <Textarea
+                      id="description_pt"
+                      name="description_pt"
+                      rows={5}
+                      value={formData.description_pt}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div className="flex flex-col space-y-2">
+                    <label htmlFor="capacity_pt" className="font-medium text-sm">
+                      {t("Capacity", "Capacidade")} *
+                    </label>
+                    <Input
+                      id="capacity_pt"
+                      name="capacity_pt"
+                      value={formData.capacity_pt}
+                      onChange={handleInputChange}
+                      placeholder="e.g. 2 Adultos"
+                    />
+                  </div>
+                  <div className="flex flex-col space-y-2">
+                    <label htmlFor="amenities_pt" className="font-medium text-sm">
+                      {t("Amenities", "Comodidades")} * {t("(comma separated)", "(separado por vírgulas)")}
+                    </label>
+                    <Textarea
+                      id="amenities_pt"
+                      name="amenities_pt"
+                      value={formData.amenities_pt}
+                      onChange={handleInputChange}
+                      placeholder="Wi-Fi Grátis, Cafeteira, Smart TV, Banheiro de Luxo"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="space-y-4 pt-4">
               <div className="flex flex-col space-y-2">
-                <label htmlFor="title_pt" className="font-medium text-sm">
-                  {t("Title", "Título")} *
+                <label htmlFor="image" className="font-medium text-sm">
+                  {t("Main Image URL", "URL da Imagem Principal")} *
                 </label>
                 <Input
-                  id="title_pt"
-                  name="title_pt"
-                  value={formData.title_pt}
+                  id="image"
+                  name="image"
+                  value={formData.image}
                   onChange={handleInputChange}
+                  placeholder="https://example.com/image.jpg"
                 />
               </div>
               <div className="flex flex-col space-y-2">
-                <label htmlFor="description_pt" className="font-medium text-sm">
-                  {t("Description", "Descrição")} *
-                </label>
-                <Textarea
-                  id="description_pt"
-                  name="description_pt"
-                  rows={5}
-                  value={formData.description_pt}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="flex flex-col space-y-2">
-                <label htmlFor="capacity_pt" className="font-medium text-sm">
-                  {t("Capacity", "Capacidade")} *
+                <label htmlFor="price" className="font-medium text-sm">
+                  {t("Price per night", "Preço por noite")} (MZN) *
                 </label>
                 <Input
-                  id="capacity_pt"
-                  name="capacity_pt"
-                  value={formData.capacity_pt}
+                  id="price"
+                  name="price"
+                  type="number"
+                  value={formData.price}
                   onChange={handleInputChange}
-                  placeholder="e.g. 2 Adultos"
-                />
-              </div>
-              <div className="flex flex-col space-y-2">
-                <label htmlFor="amenities_pt" className="font-medium text-sm">
-                  {t("Amenities", "Comodidades")} * {t("(comma separated)", "(separado por vírgulas)")}
-                </label>
-                <Textarea
-                  id="amenities_pt"
-                  name="amenities_pt"
-                  value={formData.amenities_pt}
-                  onChange={handleInputChange}
-                  placeholder="Wi-Fi Grátis, Cafeteira, Smart TV, Banheiro de Luxo"
                 />
               </div>
             </div>
-          </div>
-        </div>
-        
-        <div className="space-y-4 pt-2">
-          <div className="flex flex-col space-y-2">
-            <label htmlFor="image" className="font-medium text-sm">
-              {t("Image URL", "URL da Imagem")} *
-            </label>
-            <Input
-              id="image"
-              name="image"
-              value={formData.image}
-              onChange={handleInputChange}
-              placeholder="https://example.com/image.jpg"
+          </TabsContent>
+          
+          <TabsContent value="media" className="pt-4">
+            <MediaUploader
+              bucketName="room_media"
+              folder={editingRoom ? editingRoom.id : 'new'}
+              mediaList={formData.media || []}
+              videoList={formData.videos || []}
+              onImagesChange={handleMediaChange}
+              onVideosChange={handleVideosChange}
+              maxFiles={30}
             />
-          </div>
-          <div className="flex flex-col space-y-2">
-            <label htmlFor="price" className="font-medium text-sm">
-              {t("Price per night", "Preço por noite")} ($) *
-            </label>
-            <Input
-              id="price"
-              name="price"
-              type="number"
-              value={formData.price}
-              onChange={handleInputChange}
-            />
-          </div>
-        </div>
+          </TabsContent>
+        </Tabs>
         
-        <DialogFooter>
+        <DialogFooter className="mt-6">
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             {t("Cancel", "Cancelar")}
           </Button>

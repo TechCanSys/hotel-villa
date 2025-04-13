@@ -1,5 +1,6 @@
+
 import { useState, useEffect } from 'react';
-import { Utensils, Wine, ShowerHead, Users, Waves, DollarSign } from 'lucide-react';
+import { Utensils, Wine, ShowerHead, Users, Waves, DollarSign, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useFetchData } from '@/hooks/useSupabase';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -11,6 +12,8 @@ type Service = {
   description: string;
   description_pt: string;
   price?: number;
+  media?: string[];
+  videos?: string[];
 };
 
 type ExchangeRate = {
@@ -83,7 +86,9 @@ const Services = () => {
       title_pt: "Restaurante & Bar",
       description: "Experience exquisite dining and refreshing drinks at our elegant restaurant and bar.",
       description_pt: "Experimente uma refeição requintada e bebidas refrescantes no nosso elegante restaurante e bar.",
-      price: 500
+      price: 500,
+      media: [],
+      videos: []
     },
     {
       id: '2',
@@ -92,7 +97,9 @@ const Services = () => {
       title_pt: "Serviço de Lavandaria",
       description: "Keep your clothes fresh and clean with our premium laundry service available daily.",
       description_pt: "Mantenha suas roupas frescas e limpas com o nosso serviço de lavandaria premium disponível diariamente.",
-      price: 300
+      price: 300,
+      media: [],
+      videos: []
     },
     {
       id: '3',
@@ -101,7 +108,9 @@ const Services = () => {
       title_pt: "Sala de Reuniões",
       description: "Host your business meetings or events in our fully equipped meeting room with modern amenities.",
       description_pt: "Realize suas reuniões de negócios ou eventos na nossa sala de reuniões totalmente equipada com comodidades modernas.",
-      price: 2000
+      price: 2000,
+      media: [],
+      videos: []
     },
     {
       id: '4',
@@ -110,11 +119,68 @@ const Services = () => {
       title_pt: "Piscina",
       description: "Relax and unwind in our luxurious swimming pool with comfortable loungers and pool service.",
       description_pt: "Relaxe na nossa piscina luxuosa com espreguiçadeiras confortáveis e serviço de piscina.",
-      price: 150
+      price: 150,
+      media: [],
+      videos: []
     }
   ];
 
   const displayServices = services && services.length > 0 ? services : fallbackServices;
+
+  // Image carousel for service media
+  const ServiceMediaCarousel = ({ service }: { service: Service }) => {
+    const hasMedia = service.media && service.media.length > 0;
+    const [currentIndex, setCurrentIndex] = useState(0);
+    
+    if (!hasMedia) return null;
+    
+    const media = service.media as string[];
+    
+    const nextImage = () => {
+      setCurrentIndex((prev) => (prev + 1) % media.length);
+    };
+    
+    const prevImage = () => {
+      setCurrentIndex((prev) => (prev - 1 + media.length) % media.length);
+    };
+    
+    return (
+      <div className="relative mt-4 rounded-lg overflow-hidden h-48">
+        <img 
+          src={media[currentIndex]} 
+          alt={language === 'en' ? service.title : service.title_pt} 
+          className="w-full h-full object-cover"
+        />
+        
+        {media.length > 1 && (
+          <>
+            <button 
+              onClick={prevImage}
+              className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 text-white p-1 rounded-full"
+              aria-label="Previous image"
+            >
+              <ChevronLeft size={20} />
+            </button>
+            <button 
+              onClick={nextImage}
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 text-white p-1 rounded-full"
+              aria-label="Next image"
+            >
+              <ChevronRight size={20} />
+            </button>
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex space-x-1">
+              {media.map((_, i) => (
+                <span 
+                  key={i} 
+                  className={`w-2 h-2 rounded-full ${i === currentIndex ? 'bg-white' : 'bg-white/50'}`}
+                />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+    );
+  };
 
   return (
     <section className="py-24 md:py-32 bg-hotel-background">
@@ -160,6 +226,18 @@ const Services = () => {
               <p className="text-gray-600">
                 {language === 'en' ? service.description : service.description_pt}
               </p>
+              
+              <ServiceMediaCarousel service={service} />
+              
+              {service.videos && service.videos.length > 0 && (
+                <div className="mt-4">
+                  <video 
+                    src={service.videos[0]} 
+                    controls
+                    className="w-full h-auto rounded-lg"
+                  />
+                </div>
+              )}
             </div>
           ))}
         </div>

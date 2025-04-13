@@ -18,7 +18,9 @@ export const fetchRooms = async (): Promise<Room[]> => {
       : [String(room.amenities)],
     amenities_pt: Array.isArray(room.amenities_pt) 
       ? room.amenities_pt.map(item => String(item)) 
-      : [String(room.amenities_pt)]
+      : [String(room.amenities_pt)],
+    media: Array.isArray(room.media) ? room.media : [],
+    videos: Array.isArray(room.videos) ? room.videos : []
   })) as Room[];
   
   return transformedRooms;
@@ -35,7 +37,9 @@ export const createRoom = async (roomData: RoomFormData) => {
     capacity: roomData.capacity,
     capacity_pt: roomData.capacity_pt,
     amenities: roomData.amenities.split(',').map(item => item.trim()),
-    amenities_pt: roomData.amenities_pt.split(',').map(item => item.trim())
+    amenities_pt: roomData.amenities_pt.split(',').map(item => item.trim()),
+    media: roomData.media || [],
+    videos: roomData.videos || []
   };
 
   const { error } = await supabase
@@ -56,7 +60,9 @@ export const updateRoom = async (id: string, roomData: RoomFormData) => {
     capacity: roomData.capacity,
     capacity_pt: roomData.capacity_pt,
     amenities: roomData.amenities.split(',').map(item => item.trim()),
-    amenities_pt: roomData.amenities_pt.split(',').map(item => item.trim())
+    amenities_pt: roomData.amenities_pt.split(',').map(item => item.trim()),
+    media: roomData.media || [],
+    videos: roomData.videos || []
   };
 
   const { error } = await supabase
