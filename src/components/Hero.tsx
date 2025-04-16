@@ -134,8 +134,8 @@ const Hero = () => {
         </h1>
         <p className="text-xl md:text-2xl max-w-3xl mb-8 animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
           {t(
-            "Discover the perfect blend of elegance, comfort, and exceptional service at New Hotel",
-            "Descubra a combinação perfeita de elegância, conforto e serviço excepcional no New Hotel"
+            "Discover the perfect blend of elegance, comfort, and exceptional service at Hotel Villa Capricho",
+            "Descubra a combinação perfeita de elegância, conforto e serviço excepcional no Hotel Villa Capricho"
           )}
         </p>
         <div className="flex flex-wrap gap-4 justify-center animate-fade-in-up" style={{ animationDelay: "0.4s" }}>

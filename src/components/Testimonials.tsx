@@ -9,7 +9,7 @@ const testimonials = [
     position: "Business Traveler",
     avatar: "https://randomuser.me/api/portraits/women/12.jpg",
     rating: 5,
-    text: "My stay at New Hotel was exceptional. The staff went above and beyond to ensure my comfort. The rooms are elegantly furnished and the amenities are top-notch. I highly recommend this hotel for both business and leisure travelers."
+    text: "My stay at Hotel Villa Capricho was exceptional. The staff went above and beyond to ensure my comfort. The rooms are elegantly furnished and the amenities are top-notch. I highly recommend this hotel for both business and leisure travelers."
   },
   {
     id: 2,
@@ -25,7 +25,7 @@ const testimonials = [
     position: "Honeymoon",
     avatar: "https://randomuser.me/api/portraits/women/23.jpg",
     rating: 5,
-    text: "We chose New Hotel for our honeymoon and couldn't have made a better choice. The romantic ambiance, luxurious suite, and attentive staff created the perfect setting for our special occasion. The dining experience was exquisite."
+    text: "We chose Hotel Villa Capricho for our honeymoon and couldn't have made a better choice. The romantic ambiance, luxurious suite, and attentive staff created the perfect setting for our special occasion. The dining experience was exquisite."
   }
 ];
 
@@ -70,7 +70,7 @@ const Testimonials = () => {
             What Our Guests Say
           </h2>
           <p className="text-gray-300">
-            Don't just take our word for it - hear what our valued guests have to say about their experience at New Hotel.
+            Don't just take our word for it - hear what our valued guests have to say about their experience at Hotel Villa Capricho.
           </p>
         </div>
 

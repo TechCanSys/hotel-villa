@@ -15,10 +15,10 @@ const Welcome = () => {
               Experience Luxury Like Never Before
             </h2>
             <p className="text-gray-600 mb-6 leading-relaxed">
-              Nestled in the heart of Mozambique, New Hotel offers an unforgettable blend of luxury, comfort, and authentic hospitality. Our elegant establishment is designed to provide guests with a serene escape while ensuring all modern amenities are at your fingertips.
+              Nestled in the heart of Mozambique, Hotel Villa Capricho offers an unforgettable blend of luxury, comfort, and authentic hospitality. Our elegant establishment is designed to provide guests with a serene escape while ensuring all modern amenities are at your fingertips.
             </p>
             <p className="text-gray-600 mb-8 leading-relaxed">
-              From our meticulously designed rooms to our world-class facilities, every aspect of New Hotel is crafted to exceed your expectations. Whether you're visiting for business or leisure, our dedicated staff ensures your stay is nothing short of extraordinary.
+              From our meticulously designed rooms to our world-class facilities, every aspect of Hotel Villa Capricho is crafted to exceed your expectations. Whether you're visiting for business or leisure, our dedicated staff ensures your stay is nothing short of extraordinary.
             </p>
             <div className="flex flex-wrap gap-4">
               <Link 
