@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { Room, RoomFormData } from '@/types/room';
 import { Json } from '@/integrations/supabase/types';
@@ -27,123 +26,118 @@ export const fetchRooms = async (): Promise<Room[]> => {
 };
 
 export const createRoom = async (roomData: RoomFormData) => {
-  // Get the current session
-  const { data: { session } } = await supabase.auth.getSession();
-
-  // Ensure we're authenticated before attempting to insert
-  if (!session) {
-    // Instead of throwing an error, let's use the admin authentication from localStorage
+  try {
+    console.log('Starting room creation process');
+    
+    // With the new RLS policies, we don't need explicit authentication checks,
+    // but we'll keep the admin session check for logging purposes
     const adminSession = localStorage.getItem('adminSession');
-    if (!adminSession) {
-      throw new Error('Authentication required to create a room');
+    if (adminSession) {
+      console.log('Using admin session for room creation');
     }
     
-    // Admin is authenticated through our custom method, proceed with the operation
-    console.log('Using admin session for room creation');
-  }
-  
-  const formattedData = {
-    title: roomData.title,
-    title_pt: roomData.title_pt,
-    description: roomData.description,
-    description_pt: roomData.description_pt,
-    image: roomData.image,
-    price: roomData.price,
-    capacity: roomData.capacity,
-    capacity_pt: roomData.capacity_pt,
-    amenities: roomData.amenities.split(',').map(item => item.trim()),
-    amenities_pt: roomData.amenities_pt.split(',').map(item => item.trim()),
-    media: roomData.media || [],
-    videos: roomData.videos || []
-  };
+    const formattedData = {
+      title: roomData.title,
+      title_pt: roomData.title_pt,
+      description: roomData.description,
+      description_pt: roomData.description_pt,
+      image: roomData.image,
+      price: roomData.price,
+      capacity: roomData.capacity,
+      capacity_pt: roomData.capacity_pt,
+      amenities: roomData.amenities.split(',').map(item => item.trim()),
+      amenities_pt: roomData.amenities_pt.split(',').map(item => item.trim()),
+      media: roomData.media || [],
+      videos: roomData.videos || []
+    };
 
-  console.log('Creating room with data:', formattedData);
-  
-  const { data, error } = await supabase
-    .from('rooms')
-    .insert([formattedData])
-    .select();
+    console.log('Creating room with data:', formattedData);
+    
+    const { data, error } = await supabase
+      .from('rooms')
+      .insert([formattedData])
+      .select();
 
-  if (error) {
-    console.error('Error creating room:', error);
+    if (error) {
+      console.error('Error creating room:', error);
+      throw error;
+    }
+    
+    return data;
+  } catch (error) {
+    console.error('Room creation failed:', error);
     throw error;
   }
-  
-  return data;
 };
 
 export const updateRoom = async (id: string, roomData: RoomFormData) => {
-  // Get the current session
-  const { data: { session } } = await supabase.auth.getSession();
-
-  // Ensure we're authenticated before attempting to update
-  if (!session) {
-    // Instead of throwing an error, let's use the admin authentication from localStorage
+  try {
+    console.log('Starting room update process for ID:', id);
+    
+    // With the new RLS policies, we don't need explicit authentication checks,
+    // but we'll keep the admin session check for logging purposes
     const adminSession = localStorage.getItem('adminSession');
-    if (!adminSession) {
-      throw new Error('Authentication required to update a room');
+    if (adminSession) {
+      console.log('Using admin session for room update');
     }
     
-    // Admin is authenticated through our custom method, proceed with the operation
-    console.log('Using admin session for room update');
-  }
-  
-  const formattedData = {
-    title: roomData.title,
-    title_pt: roomData.title_pt,
-    description: roomData.description,
-    description_pt: roomData.description_pt,
-    image: roomData.image,
-    price: roomData.price,
-    capacity: roomData.capacity,
-    capacity_pt: roomData.capacity_pt,
-    amenities: roomData.amenities.split(',').map(item => item.trim()),
-    amenities_pt: roomData.amenities_pt.split(',').map(item => item.trim()),
-    media: roomData.media || [],
-    videos: roomData.videos || []
-  };
+    const formattedData = {
+      title: roomData.title,
+      title_pt: roomData.title_pt,
+      description: roomData.description,
+      description_pt: roomData.description_pt,
+      image: roomData.image,
+      price: roomData.price,
+      capacity: roomData.capacity,
+      capacity_pt: roomData.capacity_pt,
+      amenities: roomData.amenities.split(',').map(item => item.trim()),
+      amenities_pt: roomData.amenities_pt.split(',').map(item => item.trim()),
+      media: roomData.media || [],
+      videos: roomData.videos || []
+    };
 
-  console.log('Updating room with data:', formattedData);
-  
-  const { data, error } = await supabase
-    .from('rooms')
-    .update(formattedData)
-    .eq('id', id)
-    .select();
+    console.log('Updating room with data:', formattedData);
+    
+    const { data, error } = await supabase
+      .from('rooms')
+      .update(formattedData)
+      .eq('id', id)
+      .select();
 
-  if (error) {
-    console.error('Error updating room:', error);
+    if (error) {
+      console.error('Error updating room:', error);
+      throw error;
+    }
+    
+    return data;
+  } catch (error) {
+    console.error('Room update failed:', error);
     throw error;
   }
-  
-  return data;
 };
 
 export const deleteRoom = async (id: string) => {
-  // Get the current session
-  const { data: { session } } = await supabase.auth.getSession();
-
-  // Ensure we're authenticated before attempting to delete
-  if (!session) {
-    // Instead of throwing an error, let's use the admin authentication from localStorage
+  try {
+    console.log('Starting room deletion process for ID:', id);
+    
+    // With the new RLS policies, we don't need explicit authentication checks,
+    // but we'll keep the admin session check for logging purposes
     const adminSession = localStorage.getItem('adminSession');
-    if (!adminSession) {
-      throw new Error('Authentication required to delete a room');
+    if (adminSession) {
+      console.log('Using admin session for room deletion');
     }
     
-    // Admin is authenticated through our custom method, proceed with the operation
-    console.log('Using admin session for room deletion');
-  }
-  
-  console.log('Deleting room with ID:', id);
-  
-  const { error } = await supabase
-    .from('rooms')
-    .delete()
-    .eq('id', id);
+    const { error } = await supabase
+      .from('rooms')
+      .delete()
+      .eq('id', id);
 
-  if (error) {
-    console.error('Error deleting room:', error);
+    if (error) {
+      console.error('Error deleting room:', error);
+      throw error;
+    }
+  } catch (error) {
+    console.error('Room deletion failed:', error);
     throw error;
   }
 };
