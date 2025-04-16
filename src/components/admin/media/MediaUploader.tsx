@@ -7,7 +7,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface MediaUploaderProps {
-  bucketName: 'room_media' | 'service_media';
+  bucketName: 'room_media' | 'service_media' | 'gallery_media';
   folder: string;
   mediaList: string[];
   videoList: string[];

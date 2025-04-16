@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
@@ -138,7 +137,7 @@ export const useAdminAuth = () => {
 };
 
 // New hook for handling file uploads
-export const useFileUpload = (bucketName: 'room_media' | 'service_media') => {
+export const useFileUpload = (bucketName: 'room_media' | 'service_media' | 'gallery_media') => {
   const { toast } = useToast();
   const [isUploading, setIsUploading] = useState(false);
   
