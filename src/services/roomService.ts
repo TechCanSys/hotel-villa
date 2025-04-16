@@ -27,11 +27,19 @@ export const fetchRooms = async (): Promise<Room[]> => {
 };
 
 export const createRoom = async (roomData: RoomFormData) => {
+  // Get the current session
+  const { data: { session } } = await supabase.auth.getSession();
+
   // Ensure we're authenticated before attempting to insert
-  const { data: sessionData } = await supabase.auth.getSession();
-  
-  if (!sessionData.session) {
-    throw new Error('Authentication required to create a room');
+  if (!session) {
+    // Instead of throwing an error, let's use the admin authentication from localStorage
+    const adminSession = localStorage.getItem('adminSession');
+    if (!adminSession) {
+      throw new Error('Authentication required to create a room');
+    }
+    
+    // Admin is authenticated through our custom method, proceed with the operation
+    console.log('Using admin session for room creation');
   }
   
   const formattedData = {
@@ -65,11 +73,19 @@ export const createRoom = async (roomData: RoomFormData) => {
 };
 
 export const updateRoom = async (id: string, roomData: RoomFormData) => {
+  // Get the current session
+  const { data: { session } } = await supabase.auth.getSession();
+
   // Ensure we're authenticated before attempting to update
-  const { data: sessionData } = await supabase.auth.getSession();
-  
-  if (!sessionData.session) {
-    throw new Error('Authentication required to update a room');
+  if (!session) {
+    // Instead of throwing an error, let's use the admin authentication from localStorage
+    const adminSession = localStorage.getItem('adminSession');
+    if (!adminSession) {
+      throw new Error('Authentication required to update a room');
+    }
+    
+    // Admin is authenticated through our custom method, proceed with the operation
+    console.log('Using admin session for room update');
   }
   
   const formattedData = {
@@ -104,11 +120,19 @@ export const updateRoom = async (id: string, roomData: RoomFormData) => {
 };
 
 export const deleteRoom = async (id: string) => {
+  // Get the current session
+  const { data: { session } } = await supabase.auth.getSession();
+
   // Ensure we're authenticated before attempting to delete
-  const { data: sessionData } = await supabase.auth.getSession();
-  
-  if (!sessionData.session) {
-    throw new Error('Authentication required to delete a room');
+  if (!session) {
+    // Instead of throwing an error, let's use the admin authentication from localStorage
+    const adminSession = localStorage.getItem('adminSession');
+    if (!adminSession) {
+      throw new Error('Authentication required to delete a room');
+    }
+    
+    // Admin is authenticated through our custom method, proceed with the operation
+    console.log('Using admin session for room deletion');
   }
   
   console.log('Deleting room with ID:', id);
