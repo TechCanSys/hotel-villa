@@ -18,54 +18,8 @@ const Gallery = () => {
   const [filter, setFilter] = useState('all');
   const { data: galleryImages, isLoading } = useFetchData<GalleryImage>('gallery');
   
-  // Fallback images if Supabase data isn't loaded yet
-  const fallbackImages = [
-    {
-      id: '1',
-      url: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      category: 'rooms',
-      title: 'Luxury Suite',
-      title_pt: 'Suíte de Luxo'
-    },
-    {
-      id: '2',
-      url: 'https://images.unsplash.com/photo-1584132967334-10e028bd69f7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      category: 'dining',
-      title: 'Restaurant',
-      title_pt: 'Restaurante'
-    },
-    {
-      id: '3',
-      url: 'https://images.unsplash.com/photo-1575429198097-0414ec08e8cd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      category: 'spa',
-      title: 'Wellness Center',
-      title_pt: 'Centro de Bem-estar'
-    },
-    {
-      id: '4',
-      url: 'https://images.unsplash.com/photo-1606402179428-a57976d71fa4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80',
-      category: 'rooms',
-      title: 'Executive Room',
-      title_pt: 'Quarto Executivo'
-    },
-    {
-      id: '5',
-      url: 'https://images.unsplash.com/photo-1568084680786-a84f91d1153c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80',
-      category: 'amenities',
-      title: 'Swimming Pool',
-      title_pt: 'Piscina'
-    },
-    {
-      id: '6',
-      url: 'https://images.unsplash.com/photo-1621275471769-e6aa344546d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2072&q=80',
-      category: 'dining',
-      title: 'Bar & Lounge',
-      title_pt: 'Bar & Lounge'
-    }
-  ];
-  
-  // Use Supabase data if available, otherwise use fallback
-  const images = galleryImages && galleryImages.length > 0 ? galleryImages : fallbackImages;
+  // Use only Supabase data
+  const images = galleryImages || [];
   
   const filteredImages = filter === 'all' 
     ? images 
