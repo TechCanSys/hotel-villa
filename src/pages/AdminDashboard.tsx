@@ -58,18 +58,20 @@ const AdminDashboard = () => {
   return (
     <div className="flex min-h-screen bg-gray-100">
       <AdminSidebar activeSection={activeSection} setActiveSection={setActiveSection} />
-      <main className="flex-1 p-8">
-        <div className="flex items-center mb-6">
+      <main className="flex-1 p-4 md:p-8">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center mb-6 gap-2 sm:gap-4">
           <Button 
             variant="outline" 
-            className="mr-4"
+            className="mr-0 sm:mr-4"
             onClick={handleGoBack}
           >
             <ArrowLeft className="mr-2 h-4 w-4" /> Back to Site
           </Button>
-          <h1 className="text-2xl font-bold">Admin Dashboard</h1>
+          <h1 className="text-xl sm:text-2xl font-bold">Admin Dashboard</h1>
         </div>
-        {renderSection()}
+        <div className="overflow-x-auto">
+          {renderSection()}
+        </div>
       </main>
     </div>
   );

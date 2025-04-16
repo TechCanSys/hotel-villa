@@ -39,7 +39,7 @@ const Testimonials = () => {
     if (autoPlay) {
       interval = window.setInterval(() => {
         setCurrent((prev) => (prev + 1) % testimonials.length);
-      }, 5000);
+      }, 30000);
     }
     
     return () => {
@@ -58,7 +58,7 @@ const Testimonials = () => {
   };
 
   return (
-    <section className="py-24 md:py-32 parallax" style={{
+    <section className="py-2 md:py-10 parallax" style={{
       backgroundImage: "linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')"
     }}>
       <div className="container mx-auto px-4">

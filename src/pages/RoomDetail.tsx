@@ -214,7 +214,7 @@ const RoomDetail = () => {
               <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg mb-8">
                 <div>
                   <span className="block text-gray-500 text-sm">{t("Price", "Preço")}</span>
-                  <span className="text-3xl font-bold text-hotel">${displayRoom.price}</span>
+                  <span className="text-3xl font-bold text-hotel">{displayRoom.price.toLocaleString('pt-MZ')} MZN</span>
                   <span className="text-gray-500 text-sm">/{t("night", "noite")}</span>
                 </div>
                 <Button 
@@ -310,15 +310,15 @@ const RoomDetail = () => {
                   <div className="bg-gray-50 p-4 rounded-lg mb-4">
                     <div className="flex justify-between mb-2">
                       <span className="text-gray-600">{language === 'en' ? displayRoom.title : displayRoom.title_pt}</span>
-                      <span className="font-medium">${displayRoom.price}</span>
+                      <span className="font-medium">{displayRoom.price.toLocaleString('pt-MZ')} MZN</span>
                     </div>
                     <div className="flex justify-between mb-2">
                       <span className="text-gray-600">{t("Tax", "Impostos")}</span>
-                      <span className="font-medium">${Math.round(displayRoom.price * 0.1)}</span>
+                      <span className="font-medium">{Math.round(displayRoom.price * 0.1).toLocaleString('pt-MZ')} MZN</span>
                     </div>
                     <div className="border-t border-gray-200 my-2 pt-2 flex justify-between">
                       <span className="font-medium">{t("Total (per night)", "Total (por noite)")}</span>
-                      <span className="font-bold">${displayRoom.price + Math.round(displayRoom.price * 0.1)}</span>
+                      <span className="font-bold">{(displayRoom.price + Math.round(displayRoom.price * 0.1)).toLocaleString('pt-MZ')} MZN</span>
                     </div>
                   </div>
                 </>

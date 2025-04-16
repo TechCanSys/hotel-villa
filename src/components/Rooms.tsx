@@ -110,12 +110,9 @@ const Rooms = () => {
                 <h3 className="text-xl font-bold mb-2 text-hotel-text">
                   {language === 'en' ? room.title : room.title_pt}
                 </h3>
-                <p className="text-gray-600 mb-4">
-                  {language === 'en' ? room.description : room.description_pt}
-                </p>
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-hotel text-xl font-semibold">
-                    ${room.price}<span className="text-sm text-gray-500">{t("/night", "/noite")}</span>
+                    {room.price.toLocaleString('pt-MZ')} MZN<span className="text-sm text-gray-500">{t("/night", "/noite")}</span>
                   </span>
                   <span className="text-gray-500 text-sm">
                     {language === 'en' ? room.capacity : room.capacity_pt}
@@ -133,7 +130,7 @@ const Rooms = () => {
                   to={`/rooms/${room.id}`} 
                   className="block w-full py-3 text-center bg-hotel hover:bg-hotel-dark text-white font-medium rounded transition-colors duration-300"
                 >
-                  {t("Book Now", "Reserve Agora")}
+                {t("Book Now", "Reserve Agora")}
                 </Link>
               </div>
             </div>
