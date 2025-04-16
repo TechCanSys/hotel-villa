@@ -9,6 +9,8 @@ import { Label } from '@/components/ui/label';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { useToast } from '@/components/ui/use-toast';
+import { MediaUploader } from '@/components/admin/media/MediaUploader';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 type GalleryImage = {
   id: string;
@@ -24,11 +26,14 @@ const AdminGallery = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [showDialog, setShowDialog] = useState(false);
   const [editingImage, setEditingImage] = useState<GalleryImage | null>(null);
+  const [activeTab, setActiveTab] = useState('details');
   const [formData, setFormData] = useState({
     url: '',
     category: 'rooms',
     title: '',
-    title_pt: ''
+    title_pt: '',
+    media: [] as string[],
+    videos: [] as string[]
   });
   const { toast } = useToast();
 
@@ -72,8 +77,11 @@ const AdminGallery = () => {
       url: '',
       category: 'rooms',
       title: '',
-      title_pt: ''
+      title_pt: '',
+      media: [],
+      videos: []
     });
+    setActiveTab('details');
     setShowDialog(true);
   };
 
@@ -83,14 +91,20 @@ const AdminGallery = () => {
       url: image.url,
       category: image.category,
       title: image.title,
-      title_pt: image.title_pt
+      title_pt: image.title_pt,
+      media: [],
+      videos: []
     });
+    setActiveTab('details');
     setShowDialog(true);
   };
 
   const handleSubmit = async () => {
     try {
-      if (!formData.url || !formData.category || !formData.title || !formData.title_pt) {
+      // Use the first uploaded media as the main URL if available
+      const finalUrl = formData.media.length > 0 ? formData.media[0] : formData.url;
+      
+      if (!finalUrl || !formData.category || !formData.title || !formData.title_pt) {
         toast({
           title: t("Error", "Erro"),
           description: t("Please fill in all required fields", "Por favor, preencha todos os campos obrigatórios"),
@@ -100,14 +114,13 @@ const AdminGallery = () => {
       }
 
       const imageData = {
-        url: formData.url,
+        url: finalUrl,
         category: formData.category,
         title: formData.title,
         title_pt: formData.title_pt
       };
 
       if (editingImage) {
-        // Update existing image
         const { error } = await supabase
           .from('gallery')
           .update(imageData)
@@ -120,7 +133,6 @@ const AdminGallery = () => {
           description: t("Image updated successfully", "Imagem atualizada com sucesso"),
         });
       } else {
-        // Add new image
         const { error } = await supabase
           .from('gallery')
           .insert([imageData]);
@@ -168,6 +180,21 @@ const AdminGallery = () => {
         });
       }
     }
+  };
+
+  const handleMediaChange = (urls: string[]) => {
+    setFormData(prev => ({
+      ...prev,
+      media: urls,
+      url: urls[0] || prev.url // Update the main URL with the first media item if available
+    }));
+  };
+
+  const handleVideoChange = (urls: string[]) => {
+    setFormData(prev => ({
+      ...prev,
+      videos: urls
+    }));
   };
 
   return (
@@ -221,9 +248,8 @@ const AdminGallery = () => {
         </div>
       )}
       
-      {/* Add/Edit Image Dialog */}
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <DialogContent>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
               {editingImage 
@@ -232,67 +258,83 @@ const AdminGallery = () => {
             </DialogTitle>
           </DialogHeader>
           
-          <div className="space-y-4 py-4">
-            <div className="flex flex-col space-y-2">
-              <Label htmlFor="url">{t("Image URL", "URL da Imagem")} *</Label>
-              <Input
-                id="url"
-                name="url"
-                value={formData.url}
-                onChange={handleInputChange}
-                placeholder="https://example.com/image.jpg"
-              />
-              {formData.url && (
-                <div className="mt-2 rounded-md overflow-hidden border">
-                  <img 
-                    src={formData.url} 
-                    alt="Preview" 
-                    className="w-full h-32 object-cover"
-                    onError={(e) => (e.currentTarget.src = 'https://via.placeholder.com/300x150?text=Invalid+Image+URL')}
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="w-full">
+              <TabsTrigger value="details" className="flex-1">
+                {t("Details", "Detalhes")}
+              </TabsTrigger>
+              <TabsTrigger value="media" className="flex-1">
+                {t("Media", "Mídia")}
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="details">
+              <div className="space-y-4">
+                <div className="flex flex-col space-y-2">
+                  <Label htmlFor="title">{t("Title (English)", "Título (Inglês)")} *</Label>
+                  <Input
+                    id="title"
+                    name="title"
+                    value={formData.title}
+                    onChange={handleInputChange}
                   />
                 </div>
-              )}
-            </div>
-            
-            <div className="flex flex-col space-y-2">
-              <Label htmlFor="category">{t("Category", "Categoria")} *</Label>
-              <select
-                id="category"
-                name="category"
-                value={formData.category}
-                onChange={handleInputChange}
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              >
-                <option value="rooms">{t("Rooms", "Quartos")}</option>
-                <option value="dining">{t("Dining", "Restaurante")}</option>
-                <option value="spa">{t("Spa", "Spa")}</option>
-                <option value="amenities">{t("Amenities", "Comodidades")}</option>
-              </select>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex flex-col space-y-2">
-                <Label htmlFor="title">{t("Title (English)", "Título (Inglês)")} *</Label>
-                <Input
-                  id="title"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleInputChange}
-                />
+                
+                <div className="flex flex-col space-y-2">
+                  <Label htmlFor="title_pt">{t("Title (Portuguese)", "Título (Português)")} *</Label>
+                  <Input
+                    id="title_pt"
+                    name="title_pt"
+                    value={formData.title_pt}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                
+                <div className="flex flex-col space-y-2">
+                  <Label htmlFor="category">{t("Category", "Categoria")} *</Label>
+                  <select
+                    id="category"
+                    name="category"
+                    value={formData.category}
+                    onChange={handleInputChange}
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  >
+                    <option value="rooms">{t("Rooms", "Quartos")}</option>
+                    <option value="dining">{t("Dining", "Restaurante")}</option>
+                    <option value="spa">{t("Spa", "Spa")}</option>
+                    <option value="amenities">{t("Amenities", "Comodidades")}</option>
+                  </select>
+                </div>
+                
+                {formData.media.length === 0 && (
+                  <div className="flex flex-col space-y-2">
+                    <Label htmlFor="url">{t("Image URL", "URL da Imagem")} *</Label>
+                    <Input
+                      id="url"
+                      name="url"
+                      value={formData.url}
+                      onChange={handleInputChange}
+                      placeholder="https://example.com/image.jpg"
+                    />
+                  </div>
+                )}
               </div>
-              <div className="flex flex-col space-y-2">
-                <Label htmlFor="title_pt">{t("Title (Portuguese)", "Título (Português)")} *</Label>
-                <Input
-                  id="title_pt"
-                  name="title_pt"
-                  value={formData.title_pt}
-                  onChange={handleInputChange}
-                />
-              </div>
-            </div>
-          </div>
+            </TabsContent>
+            
+            <TabsContent value="media">
+              <MediaUploader
+                bucketName="gallery_media"
+                folder={editingImage ? editingImage.id : 'new'}
+                mediaList={formData.media}
+                videoList={formData.videos}
+                onImagesChange={handleMediaChange}
+                onVideosChange={handleVideoChange}
+                maxFiles={30}
+              />
+            </TabsContent>
+          </Tabs>
           
-          <DialogFooter>
+          <DialogFooter className="mt-6">
             <Button variant="outline" onClick={() => setShowDialog(false)}>
               {t("Cancel", "Cancelar")}
             </Button>
