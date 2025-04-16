@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { Room, RoomFormData } from '@/types/room';
 import { Json } from '@/integrations/supabase/types';
@@ -22,10 +23,17 @@ export const fetchRooms = async (): Promise<Room[]> => {
     videos: Array.isArray(room.videos) ? room.videos.map(item => String(item)) : []
   })) as Room[];
   
-  return transformedRooms;
+  return transformedRooms || [];
 };
 
 export const createRoom = async (roomData: RoomFormData) => {
+  // Ensure we're authenticated before attempting to insert
+  const { data: sessionData } = await supabase.auth.getSession();
+  
+  if (!sessionData.session) {
+    throw new Error('Authentication required to create a room');
+  }
+  
   const formattedData = {
     title: roomData.title,
     title_pt: roomData.title_pt,
@@ -41,14 +49,29 @@ export const createRoom = async (roomData: RoomFormData) => {
     videos: roomData.videos || []
   };
 
-  const { error } = await supabase
+  console.log('Creating room with data:', formattedData);
+  
+  const { data, error } = await supabase
     .from('rooms')
-    .insert([formattedData]);
+    .insert([formattedData])
+    .select();
 
-  if (error) throw error;
+  if (error) {
+    console.error('Error creating room:', error);
+    throw error;
+  }
+  
+  return data;
 };
 
 export const updateRoom = async (id: string, roomData: RoomFormData) => {
+  // Ensure we're authenticated before attempting to update
+  const { data: sessionData } = await supabase.auth.getSession();
+  
+  if (!sessionData.session) {
+    throw new Error('Authentication required to update a room');
+  }
+  
   const formattedData = {
     title: roomData.title,
     title_pt: roomData.title_pt,
@@ -64,19 +87,39 @@ export const updateRoom = async (id: string, roomData: RoomFormData) => {
     videos: roomData.videos || []
   };
 
-  const { error } = await supabase
+  console.log('Updating room with data:', formattedData);
+  
+  const { data, error } = await supabase
     .from('rooms')
     .update(formattedData)
-    .eq('id', id);
+    .eq('id', id)
+    .select();
 
-  if (error) throw error;
+  if (error) {
+    console.error('Error updating room:', error);
+    throw error;
+  }
+  
+  return data;
 };
 
 export const deleteRoom = async (id: string) => {
+  // Ensure we're authenticated before attempting to delete
+  const { data: sessionData } = await supabase.auth.getSession();
+  
+  if (!sessionData.session) {
+    throw new Error('Authentication required to delete a room');
+  }
+  
+  console.log('Deleting room with ID:', id);
+  
   const { error } = await supabase
     .from('rooms')
     .delete()
     .eq('id', id);
 
-  if (error) throw error;
+  if (error) {
+    console.error('Error deleting room:', error);
+    throw error;
+  }
 };

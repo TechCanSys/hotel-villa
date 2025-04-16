@@ -1,5 +1,5 @@
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { ServiceForm, ServiceFormData } from "./ServiceForm";
 import { Service } from "@/types/room";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -28,6 +28,12 @@ export const ServiceDialog = ({
               ? t("Edit Service", "Editar Serviço") 
               : t("Add New Service", "Adicionar Novo Serviço")}
           </DialogTitle>
+          <DialogDescription>
+            {t(
+              "Fill in the details to create or update a service",
+              "Preencha os detalhes para criar ou atualizar um serviço"
+            )}
+          </DialogDescription>
         </DialogHeader>
         
         <ServiceForm 

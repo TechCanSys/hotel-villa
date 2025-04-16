@@ -21,6 +21,13 @@ export const fetchServices = async (): Promise<Service[]> => {
 };
 
 export const createService = async (serviceData: ServiceFormData) => {
+  // Ensure we're authenticated before attempting to insert
+  const { data: sessionData } = await supabase.auth.getSession();
+  
+  if (!sessionData.session) {
+    throw new Error('Authentication required to create a service');
+  }
+  
   const formattedData = {
     icon: serviceData.icon,
     title: serviceData.title,
@@ -32,14 +39,29 @@ export const createService = async (serviceData: ServiceFormData) => {
     videos: serviceData.videos || []
   };
 
-  const { error } = await supabase
+  console.log('Creating service with data:', formattedData);
+  
+  const { data, error } = await supabase
     .from('services')
-    .insert([formattedData]);
+    .insert([formattedData])
+    .select();
 
-  if (error) throw error;
+  if (error) {
+    console.error('Error creating service:', error);
+    throw error;
+  }
+  
+  return data;
 };
 
 export const updateService = async (id: string, serviceData: ServiceFormData) => {
+  // Ensure we're authenticated before attempting to update
+  const { data: sessionData } = await supabase.auth.getSession();
+  
+  if (!sessionData.session) {
+    throw new Error('Authentication required to update a service');
+  }
+  
   const formattedData = {
     icon: serviceData.icon,
     title: serviceData.title,
@@ -51,19 +73,39 @@ export const updateService = async (id: string, serviceData: ServiceFormData) =>
     videos: serviceData.videos || []
   };
 
-  const { error } = await supabase
+  console.log('Updating service with data:', formattedData);
+  
+  const { data, error } = await supabase
     .from('services')
     .update(formattedData)
-    .eq('id', id);
+    .eq('id', id)
+    .select();
 
-  if (error) throw error;
+  if (error) {
+    console.error('Error updating service:', error);
+    throw error;
+  }
+  
+  return data;
 };
 
 export const deleteService = async (id: string) => {
+  // Ensure we're authenticated before attempting to delete
+  const { data: sessionData } = await supabase.auth.getSession();
+  
+  if (!sessionData.session) {
+    throw new Error('Authentication required to delete a service');
+  }
+  
+  console.log('Deleting service with ID:', id);
+  
   const { error } = await supabase
     .from('services')
     .delete()
     .eq('id', id);
 
-  if (error) throw error;
+  if (error) {
+    console.error('Error deleting service:', error);
+    throw error;
+  }
 };
