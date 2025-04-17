@@ -32,7 +32,8 @@ const Rooms = () => {
       ],
       amenities: language === 'en' 
         ? ["King Size", "Meeting Room", "Wi-Fi", "Breakfast", "Minibar", "Flat Screen TV", "Air Conditioning", "Safe"]
-        : ["King Size", "Sala de Reunião", "Wi-Fi", "Pequeno Almoço", "Minibar", "TV de Tela Plana", "Ar Condicionado", "Cofre"]
+        : ["King Size", "Sala de Reunião", "Wi-Fi", "Pequeno Almoço", "Minibar", "TV de Tela Plana", "Ar Condicionado", "Cofre"],
+      featured: true
     },
     {
       name: language === 'en' ? "Executive Room" : "Quarto Executivo",
@@ -56,12 +57,13 @@ const Rooms = () => {
       ],
       amenities: language === 'en'
         ? ["Queen Size", "Work Area", "Wi-Fi", "Breakfast", "Flat Screen TV", "Air Conditioning", "Safe"]
-        : ["Cama Queen Size", "Área de Trabalho", "Wi-Fi", "Pequeno Almoço", "TV de Tela Plana", "Ar Condicionado", "Cofre"]
+        : ["Cama Queen Size", "Área de Trabalho", "Wi-Fi", "Pequeno Almoço", "TV de Tela Plana", "Ar Condicionado", "Cofre"],
+      promotion: language === 'en' ? "15% discount for 3+ night stays" : "15% de desconto para estadias de 3+ noites"
     }
   ];
 
   return (
-    <section className="py-24 md:py-32">
+    <section id="rooms" className="py-24 md:py-32">
       <div className="container mx-auto px-4">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <span className="text-hotel uppercase tracking-widest text-sm font-medium mb-4 block">
@@ -79,14 +81,17 @@ const Rooms = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {rooms.map((room, index) => (
-            <RoomCard
-              key={index}
-              name={room.name}
-              description={room.description}
-              price={room.price}
-              images={room.images}
-              amenities={room.amenities}
-            />
+            <div key={index} className="h-full flex">
+              <RoomCard
+                name={room.name}
+                description={room.description}
+                price={room.price}
+                images={room.images}
+                amenities={room.amenities}
+                promotion={room.promotion}
+                featured={room.featured}
+              />
+            </div>
           ))}
         </div>
       </div>
