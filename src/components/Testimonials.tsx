@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Star, ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -62,19 +61,16 @@ const Testimonials = () => {
       backgroundImage: "linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')"
     }}>
       <div className="container mx-auto px-4">
-        <div className="text-center max-w-3xl mx-auto mb-16">
+        <div className="text-center max-w-3xl mx-auto mb-8">
           <span className="text-hotel uppercase tracking-widest text-sm font-medium mb-4 block">
             Testimonials
           </span>
           <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">
             What Our Guests Say
           </h2>
-          <p className="text-gray-300">
-            Don't just take our word for it - hear what our valued guests have to say about their experience at Hotel Villa Capricho.
-          </p>
         </div>
 
-        <div className="max-w-4xl mx-auto relative">
+        <div className="max-w-3xl mx-auto relative">
           <div className="overflow-hidden">
             <div 
               className="flex transition-transform duration-500 ease-in-out"
@@ -83,25 +79,20 @@ const Testimonials = () => {
               {testimonials.map((testimonial) => (
                 <div 
                   key={testimonial.id} 
-                  className="w-full flex-shrink-0 bg-white rounded-lg shadow-xl p-8 md:p-10"
+                  className="w-full flex-shrink-0 bg-white rounded-lg shadow-xl p-6"
                 >
-                  <div className="flex items-center mb-6">
+                  <div className="flex items-center mb-4">
                     <img 
                       src={testimonial.avatar} 
                       alt={testimonial.name} 
-                      className="w-16 h-16 rounded-full mr-4 object-cover"
+                      className="w-12 h-12 rounded-full mr-4 object-cover"
                     />
                     <div>
-                      <h3 className="text-xl font-bold text-hotel-text">{testimonial.name}</h3>
-                      <p className="text-gray-600">{testimonial.position}</p>
-                      <div className="flex mt-1">
-                        {[...Array(testimonial.rating)].map((_, i) => (
-                          <Star key={i} size={16} fill="#C19851" color="#C19851" />
-                        ))}
-                      </div>
+                      <h3 className="text-lg font-bold text-hotel-text">{testimonial.name}</h3>
+                      <p className="text-sm text-gray-600">{testimonial.position}</p>
                     </div>
                   </div>
-                  <p className="text-gray-600 italic">"{testimonial.text}"</p>
+                  <p className="text-gray-600 text-sm italic">{testimonial.text}</p>
                 </div>
               ))}
             </div>

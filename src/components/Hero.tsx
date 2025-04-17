@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Calendar, BedDouble, Users, Check } from 'lucide-react';
@@ -146,6 +145,13 @@ const Hero = () => {
             className="bg-hotel hover:bg-hotel-dark text-white px-8 py-3 rounded-md text-lg font-medium transition-colors duration-300"
           >
             {t("Book Now", "Reserve Agora")}
+          </Button>
+          <Button
+            variant="outline"
+            onClick={handleCheckAvailability}
+            className="bg-transparent hover:bg-white/10 text-white border-2 border-white px-8 py-3 rounded-md text-lg font-medium transition-colors duration-300"
+          >
+            {t("Check Availability", "Verificar Disponibilidade")}
           </Button>
           <Link
             to="/rooms"

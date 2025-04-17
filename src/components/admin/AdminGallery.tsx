@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -36,6 +35,14 @@ const AdminGallery = () => {
     videos: [] as string[]
   });
   const { toast } = useToast();
+
+  const categories = [
+    { value: 'rooms', label: t('Rooms', 'Quartos') },
+    { value: 'dining', label: t('Dining', 'Restaurante') },
+    { value: 'meeting', label: t('Meeting Room', 'Sala de Reunião') },
+    { value: 'pool', label: t('Pool', 'Piscina') },
+    { value: 'misc', label: t('Miscellaneous', 'Diversos') }
+  ];
 
   useEffect(() => {
     fetchImages();
@@ -101,7 +108,6 @@ const AdminGallery = () => {
 
   const handleSubmit = async () => {
     try {
-      // Use the first uploaded media as the main URL if available
       const finalUrl = formData.media.length > 0 ? formData.media[0] : formData.url;
       
       if (!finalUrl || !formData.category || !formData.title || !formData.title_pt) {
@@ -186,7 +192,7 @@ const AdminGallery = () => {
     setFormData(prev => ({
       ...prev,
       media: urls,
-      url: urls[0] || prev.url // Update the main URL with the first media item if available
+      url: urls[0] || prev.url
     }));
   };
 
@@ -299,10 +305,9 @@ const AdminGallery = () => {
                     onChange={handleInputChange}
                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                   >
-                    <option value="rooms">{t("Rooms", "Quartos")}</option>
-                    <option value="dining">{t("Dining", "Restaurante")}</option>
-                    <option value="spa">{t("Spa", "Spa")}</option>
-                    <option value="amenities">{t("Amenities", "Comodidades")}</option>
+                    {categories.map(category => (
+                      <option key={category.value} value={category.value}>{category.label}</option>
+                    ))}
                   </select>
                 </div>
                 
