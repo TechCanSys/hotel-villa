@@ -34,30 +34,21 @@ const Welcome = () => {
   };
 
   return (
-    <section className="py-24 md:py-32 bg-hotel-background">
+    <section className="py-16 md:py-24 bg-hotel-background">
       <div className="container mx-auto px-4">
-        {/* Seletor de idioma */}
-        
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
           {/* Texto */}
           <div className="order-2 lg:order-1">
-            <span className="text-hotel uppercase tracking-widest text-sm font-medium mb-4 block">
+            <span className="text-hotel uppercase tracking-widest text-sm font-medium mb-3 block">
               {t('Welcome to Hotel Villa Capricho', 'Bem-vindo ao Hotel Villa Capricho')}
             </span>
-            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-hotel-text">
+            <h2 className="text-2xl md:text-3xl font-bold mb-4 text-hotel-text">
               {t('Experience Luxury Like Never Before', 'Experimente o luxo como nunca antes')}
             </h2>
-            <p className="text-gray-600 mb-6 leading-relaxed">
+            <p className="text-gray-600 mb-4 leading-relaxed">
               {t(
-                'Nestled in the heart of Mozambique, Hotel Villa Capricho offers an unforgettable blend of luxury, comfort, and authentic hospitality. Our elegant establishment is designed to provide guests with a serene escape while ensuring all modern amenities are at your fingertips.',
-                'No coração de Moçambique, o Hotel Villa Capricho oferece uma combinação inesquecível de luxo, conforto e hospitalidade autêntica. Nossa estrutura elegante proporciona aos hóspedes uma fuga serena com todas as comodidades modernas.'
-              )}
-            </p>
-            <p className="text-gray-600 mb-8 leading-relaxed">
-              {t(
-                'From our meticulously designed rooms to our world-class facilities, every aspect of Hotel Villa Capricho is crafted to exceed your expectations. Whether you\'re visiting for business or leisure, our dedicated staff ensures your stay is nothing short of extraordinary.',
-                'Dos quartos projetados com cuidado às nossas instalações de classe mundial, cada detalhe do Hotel Villa Capricho é feito para superar suas expectativas. Seja a negócios ou lazer, nossa equipe dedicada garante uma estadia extraordinária.'
+                'Nestled in the heart of Mozambique, Hotel Villa Capricho offers an unforgettable blend of luxury, comfort, and authentic hospitality.',
+                'No coração de Moçambique, o Hotel Villa Capricho oferece uma combinação inesquecível de luxo, conforto e hospitalidade autêntica.'
               )}
             </p>
             <div className="flex flex-wrap gap-4">

@@ -1,4 +1,3 @@
-
 import { MapPin, Phone, Mail, Clock } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useState } from 'react';
@@ -74,7 +73,7 @@ Message: ${formData.message}
   };
 
   return (
-    <section className="py-24 md:py-32 bg-hotel-background">
+    <section className="py-16 md:py-24 bg-hotel-background">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           <div>
@@ -218,6 +217,11 @@ Message: ${formData.message}
                 </button>
               </form>
             </div>
+          </div>
+          
+          <div className="lg:col-span-2 mt-8">
+            <h3 className="text-2xl font-bold text-hotel-text mb-6">{t("Nossa Localização", "Our Location")}</h3>
+            <Map />
           </div>
         </div>
       </div>
