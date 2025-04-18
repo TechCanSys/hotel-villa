@@ -73,14 +73,15 @@ const AdminPricing = () => {
   const handleSave = () => {
     if (!editItem) return;
     
-    // Em um ambiente de produção, isso enviaria alterações ao Supabase
+    // Update items with the edited item
     setItems(prev => prev.map(item => 
       item.id === editItem.id ? editItem : item
     ));
     
+    // Use t() for translations and provide both title and description
     toast({
-      title: t("Success", "Sucesso"),
-      description: t("Price updated successfully", "Preço atualizado com sucesso"),
+      title: t("Price Update", "Atualização de Preço"),
+      description: t("Price updated successfully", "Preço atualizado com sucesso")
     });
     
     setEditItem(null);
