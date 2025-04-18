@@ -27,7 +27,13 @@ const Hero = () => {
   const [guests, setGuests] = useState('1 Adult');
   const [roomType, setRoomType] = useState('Any');
   
- 
+  // Additional booking details state
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [specialRequests, setSpecialRequests] = useState('');
+  const [bookingSuccess, setBookingSuccess] = useState(false);
+  const [showBookingDialog, setShowBookingDialog] = useState(false);
 
   const handleBooking = async () => {
     if (!name || !email) {
