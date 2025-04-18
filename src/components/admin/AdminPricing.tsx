@@ -18,7 +18,7 @@ interface PricingItem {
 }
 
 const AdminPricing = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [isLoading, setIsLoading] = useState(true);
   const [items, setItems] = useState<PricingItem[]>([]);
   const [editItem, setEditItem] = useState<PricingItem | null>(null);
@@ -135,8 +135,8 @@ const AdminPricing = () => {
         {items.map((item) => (
           <Card key={item.id}>
             <CardHeader>
-              <CardTitle>{t("language") === 'en' ? item.name : item.name_pt}</CardTitle>
-              <CardDescription>{t("language") === 'en' ? item.description : item.description_pt}</CardDescription>
+              <CardTitle>{language === 'en' ? item.name : item.name_pt}</CardTitle>
+              <CardDescription>{language === 'en' ? item.description : item.description_pt}</CardDescription>
             </CardHeader>
             <CardContent>
               {editItem && editItem.id === item.id ? (

@@ -4,6 +4,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 import RoomCard from './RoomCard';
 import { Loader2 } from 'lucide-react';
+import { Json } from '@/integrations/supabase/types';
 
 interface RoomData {
   id: string;
@@ -38,7 +39,7 @@ const Rooms = () => {
       if (error) throw error;
       
       // Transform the data to match the component's needs
-      const formattedRooms = data.map(room => ({
+      const formattedRooms: RoomData[] = data.map(room => ({
         id: room.id,
         title: room.title,
         title_pt: room.title_pt,
@@ -46,9 +47,9 @@ const Rooms = () => {
         description_pt: room.description_pt,
         price: room.price,
         image: room.image,
-        amenities: Array.isArray(room.amenities) ? room.amenities : [],
-        amenities_pt: Array.isArray(room.amenities_pt) ? room.amenities_pt : [],
-        media: Array.isArray(room.media) ? room.media : [room.image],
+        amenities: Array.isArray(room.amenities) ? room.amenities.map(item => String(item)) : [],
+        amenities_pt: Array.isArray(room.amenities_pt) ? room.amenities_pt.map(item => String(item)) : [],
+        media: Array.isArray(room.media) ? room.media.map(item => String(item)) : [room.image],
       }));
       
       setRooms(formattedRooms);
@@ -87,7 +88,7 @@ const Rooms = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {rooms.map((room) => (
+          {rooms.map((room, idx) => (
             <div key={room.id} className="h-full flex">
               <RoomCard
                 name={language === 'en' ? room.title : room.title_pt}
@@ -98,7 +99,7 @@ const Rooms = () => {
                   alt: `${language === 'en' ? room.title : room.title_pt} - Image ${index + 1}`
                 }))}
                 amenities={language === 'en' ? room.amenities : room.amenities_pt}
-                featured={index === 0} // First room is featured
+                featured={idx === 0} // First room is featured
               />
             </div>
           ))}
