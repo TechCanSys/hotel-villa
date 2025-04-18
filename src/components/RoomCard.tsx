@@ -147,11 +147,11 @@ const RoomCard = ({ room, images, promotion, featured = false, language }: RoomC
           </div>
         )}
         
-        <div className="relative h-80 overflow-hidden group">
+        <div className="relative h-96 overflow-hidden group">
           <img 
             src={images[currentImage].url} 
             alt={images[currentImage].alt} 
-            className="w-full h-full object-cover transition-opacity duration-500 transform group-hover:scale-110"
+            className="w-full h-full object-cover transition-all duration-500 ease-in-out transform group-hover:scale-110"
             style={{ opacity: 1 }}
           />
           
@@ -173,7 +173,7 @@ const RoomCard = ({ room, images, promotion, featured = false, language }: RoomC
         
         <div className="p-6 flex-1 flex flex-col">
           <h3 className="text-xl font-bold text-hotel-text mb-2 h-8 overflow-hidden">{name}</h3>
-          <p className="text-gray-600 mb-4 line-clamp-2 h-12 overflow-hidden">{description}</p>
+          <p className="text-gray-600 mb-4 line-clamp-1 h-6 overflow-hidden">{description}</p>
           
           <div className="flex flex-wrap gap-3 mb-4 h-16 overflow-hidden">
             {amenities.slice(0, 4).map((amenity, index) => (
