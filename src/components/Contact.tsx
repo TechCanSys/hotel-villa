@@ -2,6 +2,7 @@ import { MapPin, Phone, Mail, Clock } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
+import GoogleMap from '@/components/GoogleMap';
 
 const Contact = () => {
   const { t } = useLanguage();
