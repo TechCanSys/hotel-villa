@@ -1,5 +1,5 @@
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { 
   Card,
   CardContent,
@@ -51,6 +51,7 @@ const RoomCard = ({ name, description, price, images, amenities, promotion, feat
   const [showBookingDialog, setShowBookingDialog] = useState(false);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const detailsCloseRef = useRef<HTMLButtonElement>(null);
+  const intervalRef = useRef<NodeJS.Timeout>();
 
   const [bookingData, setBookingData] = useState({
     checkInDate: '',
@@ -66,15 +67,36 @@ const RoomCard = ({ name, description, price, images, amenities, promotion, feat
     specialRequests: ''
   });
 
+  const [showDateDialog, setShowDateDialog] = useState(false);
+
   const handleBookNow = () => {
-    closeButtonRef.current?.click();
     setShowBookingDialog(true);
+    closeButtonRef.current?.click();
+  };
+
+  const calculateTotal = (checkIn: string, checkOut: string, priceStr: string) => {
+    if (!checkIn || !checkOut) return 0;
+    
+    const price = parseFloat(priceStr.replace(/[^0-9.]/g, ''));
+    const startDate = new Date(checkIn);
+    const endDate = new Date(checkOut);
+    const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    return price * diffDays;
+  };
+
+  const handleDateSubmit = () => {
+    setShowDateDialog(false);
   };
 
   const handleManualNavigation = (index: number) => {
     setIsPaused(true);
     setCurrentImage(index);
-    setTimeout(() => setIsPaused(false), 10000);
+    clearInterval(intervalRef.current);
+    intervalRef.current = setInterval(() => {
+      setCurrentImage(prev => (prev === images.length - 1 ? 0 : prev + 1));
+    }, 8000);
   };
 
   const onBookingSubmit = () => {
@@ -97,14 +119,19 @@ const RoomCard = ({ name, description, price, images, amenities, promotion, feat
     });
   };
 
+  useEffect(() => {
+    if (!isPaused && images.length > 1) {
+      intervalRef.current = setInterval(() => {
+        setCurrentImage(prev => (prev === images.length - 1 ? 0 : prev + 1));
+      }, 8000);
+    }
+    return () => clearInterval(intervalRef.current);
+  }, [isPaused, images.length]);
+
   return (
     <>
       <div className={`bg-white rounded-lg overflow-hidden shadow-lg flex flex-col h-full ${featured ? 'ring-2 ring-hotel' : ''}`}>
-        {featured && (
-          <div className="bg-hotel text-white text-center py-2 font-semibold">
-            Recomendado
-          </div>
-        )}
+        
         
         {promotion && (
           <div className="bg-green-50 text-green-700 text-center py-2 font-semibold">
@@ -116,7 +143,8 @@ const RoomCard = ({ name, description, price, images, amenities, promotion, feat
           <img 
             src={images[currentImage].url} 
             alt={images[currentImage].alt} 
-            className="w-full h-full object-cover transition duration-500 transform group-hover:scale-110"
+            className="w-full h-full object-cover transition-opacity duration-500 transform group-hover:scale-110"
+            style={{ opacity: 1 }}
           />
           
           <div className="absolute top-1/2 transform -translate-y-1/2 left-0 right-0 flex justify-between px-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -205,6 +233,14 @@ const RoomCard = ({ name, description, price, images, amenities, promotion, feat
                     <div className="mb-6">
                       <h4 className="font-bold text-hotel-text mb-2">Preço</h4>
                       <p className="text-3xl font-bold text-hotel">{price} <span className="text-sm text-gray-500"> / noite</span></p>
+                      {bookingData.checkInDate && bookingData.checkOutDate && (
+                        <div className="mt-4">
+                          <p className="text-lg font-semibold text-gray-700">
+                            Total: {calculateTotal(bookingData.checkInDate, bookingData.checkOutDate, price).toLocaleString('pt-MZ')}MT
+                          </p>
+                          <p className="text-sm text-gray-500">Taxas: 0MT</p>
+                        </div>
+                      )}
                     </div>
                     
                     <Button 
@@ -222,6 +258,53 @@ const RoomCard = ({ name, description, price, images, amenities, promotion, feat
           </div>
         </div>
       </div>
+
+      <Dialog open={showDateDialog} onOpenChange={setShowDateDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-hotel-text">Selecione as Datas</DialogTitle>
+          </DialogHeader>
+          
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-1 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Check-in</label>
+                <input 
+                  type="date" 
+                  className="w-full p-2 border rounded"
+                  value={bookingData.checkInDate}
+                  onChange={(e) => setBookingData({...bookingData, checkInDate: e.target.value})}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Check-out</label>
+                <input 
+                  type="date" 
+                  className="w-full p-2 border rounded"
+                  value={bookingData.checkOutDate}
+                  onChange={(e) => setBookingData({...bookingData, checkOutDate: e.target.value})}
+                />
+              </div>
+            </div>
+          </div>
+          
+          <div className="flex justify-end gap-2">
+            <Button 
+              variant="outline" 
+              onClick={() => setShowDateDialog(false)}
+            >
+              Cancelar
+            </Button>
+            <Button 
+              className="bg-hotel hover:bg-hotel/90 text-white"
+              onClick={handleDateSubmit}
+              disabled={!bookingData.checkInDate || !bookingData.checkOutDate}
+            >
+              Continuar
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <BookingDialog
         isOpen={showBookingDialog}

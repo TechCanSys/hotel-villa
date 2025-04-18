@@ -2,7 +2,6 @@ import { MapPin, Phone, Mail, Clock } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
-import GoogleMap from '@/components/GoogleMap';
 
 const Contact = () => {
   const { t } = useLanguage();
@@ -218,13 +217,6 @@ Message: ${formData.message}
                 </button>
               </form>
             </div>
-          </div>
-          
-          <div className="lg:col-span-2 mt-8">
-            <h3 className="text-2xl font-bold text-hotel-text mb-6">
-              {t("Nossa Localização", "Our Location")}
-            </h3>
-            <GoogleMap />
           </div>
         </div>
       </div>
