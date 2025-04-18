@@ -1,6 +1,6 @@
 
 import { useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { 
   Card,
   CardContent,
@@ -49,11 +49,17 @@ const RoomCard = ({ name, description, price, images, amenities, promotion, feat
   const [currentImage, setCurrentImage] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const navigate = useNavigate();
 
   const handleManualNavigation = (index: number) => {
     setIsPaused(true);
     setCurrentImage(index);
     setTimeout(() => setIsPaused(false), 10000); // Resume after 10 seconds of inactivity
+  };
+
+  const handleBookNow = () => {
+    closeButtonRef.current?.click();
+    navigate('/rooms');
   };
 
   return (
@@ -118,7 +124,7 @@ const RoomCard = ({ name, description, price, images, amenities, promotion, feat
                 Ver Detalhes
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-3xl w-[95vw] p-4 sm:p-6 overflow-y-auto max-h-[90vh]">
+            <DialogContent className="max-w-4xl w-[90vw] p-4 sm:p-6 overflow-y-auto max-h-[90vh]">
               <DialogHeader>
                 <DialogTitle className="text-2xl font-bold text-hotel-text">{name}</DialogTitle>
               </DialogHeader>
@@ -167,11 +173,9 @@ const RoomCard = ({ name, description, price, images, amenities, promotion, feat
                   
                   <Button 
                     className="w-full bg-hotel hover:bg-hotel/90 text-white"
-                    asChild
+                    onClick={handleBookNow}
                   >
-                    <Link to="/rooms">
-                      Reservar Agora
-                    </Link>
+                    Reservar Agora
                   </Button>
                   
                   <DialogClose ref={closeButtonRef} className="hidden" />

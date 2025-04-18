@@ -6,6 +6,8 @@ import AdminRooms from '@/components/admin/AdminRooms';
 import AdminServices from '@/components/admin/AdminServices';
 import AdminGallery from '@/components/admin/AdminGallery';
 import AdminBookings from '@/components/admin/AdminBookings';
+import AdminPricing from '@/components/admin/AdminPricing';
+import AdminSettings from '@/components/admin/AdminSettings';
 import { AdminSidebar } from '@/components/admin/navigation/AdminSidebar';
 import { DashboardOverview } from '@/components/admin/dashboard/DashboardOverview';
 import { ArrowLeft } from 'lucide-react';
@@ -38,6 +40,10 @@ const AdminDashboard = () => {
         return <AdminGallery />;
       case 'bookings':
         return <AdminBookings />;
+      case 'pricing':
+        return <AdminPricing />;
+      case 'settings':
+        return <AdminSettings />;
       default:
         return <DashboardOverview />;
     }

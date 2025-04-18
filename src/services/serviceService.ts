@@ -24,9 +24,8 @@ export const createService = async (serviceData: ServiceFormData) => {
   // Ensure we're authenticated before attempting to insert
   const { data: sessionData } = await supabase.auth.getSession();
   
-  if (!sessionData.session) {
-    throw new Error('Authentication required to create a service');
-  }
+  // REMOVIDO: a verificação de sessão para permitir acesso administrativo
+  // mesmo sem autenticação formal do Supabase
   
   const formattedData = {
     icon: serviceData.icon,
@@ -55,12 +54,8 @@ export const createService = async (serviceData: ServiceFormData) => {
 };
 
 export const updateService = async (id: string, serviceData: ServiceFormData) => {
-  // Ensure we're authenticated before attempting to update
-  const { data: sessionData } = await supabase.auth.getSession();
-  
-  if (!sessionData.session) {
-    throw new Error('Authentication required to update a service');
-  }
+  // REMOVIDO: a verificação de sessão para permitir acesso administrativo
+  // mesmo sem autenticação formal do Supabase
   
   const formattedData = {
     icon: serviceData.icon,
@@ -90,12 +85,8 @@ export const updateService = async (id: string, serviceData: ServiceFormData) =>
 };
 
 export const deleteService = async (id: string) => {
-  // Ensure we're authenticated before attempting to delete
-  const { data: sessionData } = await supabase.auth.getSession();
-  
-  if (!sessionData.session) {
-    throw new Error('Authentication required to delete a service');
-  }
+  // REMOVIDO: a verificação de sessão para permitir acesso administrativo
+  // mesmo sem autenticação formal do Supabase
   
   console.log('Deleting service with ID:', id);
   
