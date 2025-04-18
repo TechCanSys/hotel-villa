@@ -21,16 +21,20 @@ import { Wifi, Coffee, Tv, Bath, BedDouble, Users, AirVent, Lock } from 'lucide-
 import BookingDialog from './hero/BookingDialog';
 
 interface RoomCardProps {
-  name: string;
-  description: string;
-  price: string;
-  images: {
-    url: string;
-    alt: string;
-  }[];
-  amenities: string[];
+  room: {
+    id: string;
+    title: string;
+    title_pt: string;
+    description: string;
+    description_pt: string;
+    price: number;
+    amenities: string[];
+    amenities_pt: string[];
+  };
+  images: { url: string; alt: string }[];
   promotion?: string;
   featured?: boolean;
+  language: 'en' | 'pt';
 }
 
 const getAmenityIcon = (amenity: string) => {
@@ -45,7 +49,11 @@ const getAmenityIcon = (amenity: string) => {
   return null;
 };
 
-const RoomCard = ({ name, description, price, images, amenities, promotion, featured = false }: RoomCardProps) => {
+const RoomCard = ({ room, images, promotion, featured = false, language }: RoomCardProps) => {
+  const name = language === 'en' ? room.title : room.title_pt;
+  const description = language === 'en' ? room.description : room.description_pt;
+  const price = room.price.toLocaleString('pt-MZ') + 'MZN';
+  const amenities = language === 'en' ? room.amenities : room.amenities_pt;
   const [currentImage, setCurrentImage] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [showBookingDialog, setShowBookingDialog] = useState(false);

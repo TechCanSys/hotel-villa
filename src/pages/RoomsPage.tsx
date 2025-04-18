@@ -1,11 +1,12 @@
-
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useFetchData } from '@/hooks/useSupabase';
+import { supabase } from '@/integrations/supabase/client';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { Wifi, Coffee, Tv, Bath, BedDouble, Users, ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import RoomCard from '@/components/RoomCard';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/components/ui/use-toast';
 
 type Room = {
   id: string;
@@ -21,98 +22,55 @@ type Room = {
   amenities_pt: string[];
 };
 
-const getAmenityIcon = (amenity: string) => {
-  if (amenity.includes('WiFi') || amenity.includes('Wi-Fi')) return <Wifi size={18} />;
-  if (amenity.includes('Coffee') || amenity.includes('Café')) return <Coffee size={18} />;
-  if (amenity.includes('TV') || amenity.includes('Televisão')) return <Tv size={18} />;
-  if (amenity.includes('Bathroom') || amenity.includes('Banheiro')) return <Bath size={18} />;
-  return null;
-};
-
 const RoomsPage = () => {
+  const [rooms, setRooms] = useState<Room[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const { language, t } = useLanguage();
-  const { data: rooms, isLoading } = useFetchData<Room>('rooms');
-  const [filter, setFilter] = useState('all');
+  const { toast } = useToast();
 
-  // Use only Supabase data
-  const displayRooms = rooms || [];
+  useEffect(() => {
+    const fetchRooms = async () => {
+      try {
+        setIsLoading(true);
+        const { data, error } = await supabase
+          .from('rooms')
+          .select('*');
+
+        if (error) throw error;
+        
+        if (data) {
+          setRooms(data as Room[]);
+        }
+      } catch (error) {
+        console.error('Error fetching rooms:', error);
+        toast({
+          title: t("Error", "Erro"),
+          description: t("Failed to load rooms", "Falha ao carregar quartos"),
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchRooms();
+  }, []);
 
   return (
     <>
       <Navbar />
-      <div className="bg-gray-50 py-20">
+      <div className="pt-8 pb-16">
         <div className="container mx-auto px-4">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <span className="text-hotel uppercase tracking-widest text-sm font-medium mb-4 block">
-              {t("Accommodation", "Acomodação")}
-            </span>
-            <h1 className="text-4xl md:text-5xl font-bold mb-6 text-hotel-text">
-              {t("Our Luxurious Rooms & Suites", "Nossos Quartos & Suítes Luxuosos")}
-            </h1>
-            <p className="text-gray-600">
-              {t(
-                "Experience the perfect blend of comfort and luxury in our well-appointed rooms and suites, designed to make your stay memorable.",
-                "Experimente a combinação perfeita de conforto e luxo em nossos quartos e suítes bem equipados, projetados para tornar a sua estadia memorável."
-              )}
-            </p>
-          </div>
-
+          <h1 className="text-3xl md:text-4xl font-bold mb-8 text-hotel-text">
+            {t("Our Rooms", "Nossos Quartos")}
+          </h1>
+          
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {displayRooms.map((room) => (
-              <div 
-                key={room.id} 
-                className="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300"
-              >
-                <div className="overflow-hidden">
-                  <img 
-                    src={room.image} 
-                    alt={language === 'en' ? room.title : room.title_pt} 
-                    className="w-full h-64 object-cover transition-transform duration-500 hover:scale-110"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.onerror = null;
-                      target.src = '/placeholder.svg';
-                    }}
-                  />
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-2 text-hotel-text">
-                    {language === 'en' ? room.title : room.title_pt}
-                  </h3>
-                  <p className="text-gray-600 mb-4">
-                    {language === 'en' ? room.description : room.description_pt}
-                  </p>
-                  
-                  <div className="flex flex-wrap gap-3 mb-4">
-                    <div className="flex items-center gap-1 text-gray-600">
-                      <BedDouble size={18} />
-                      <span>{language === 'en' ? room.capacity : room.capacity_pt}</span>
-                    </div>
-                  </div>
-                  
-                  <div className="flex flex-wrap gap-3 mb-6">
-                    {(language === 'en' ? room.amenities : room.amenities_pt).map((amenity, i) => (
-                      <div key={i} className="flex items-center gap-1 text-gray-600 text-sm">
-                        {getAmenityIcon(amenity)}
-                        <span>{amenity}</span>
-                      </div>
-                    ))}
-                  </div>
-                  
-                  <div className="flex justify-between items-center mb-4">
-                    <span className="text-hotel text-xl font-semibold">
-                      {room.price.toLocaleString('pt-MZ')} MZN<span className="text-sm text-gray-500">{t("/night", "/noite")}</span>
-                    </span>
-                  </div>
-                  
-                  <Link 
-                    to={`/rooms/${room.id}`} 
-                    className="block w-full py-3 text-center bg-hotel hover:bg-hotel-dark text-white font-medium rounded transition-colors duration-300"
-                  >
-                    {t("View Details", "Ver Detalhes")}
-                  </Link>
-                </div>
-              </div>
+            {rooms.map((room) => (
+              <RoomCard 
+                    key={room.id}
+                    room={room}
+                    language={language} images={[]}              />
             ))}
           </div>
         </div>

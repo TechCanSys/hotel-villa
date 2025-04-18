@@ -73,10 +73,10 @@ const Welcome = () => {
               ) : (
                 <video
                   key={currentIndex}
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
+                  autoPlay={true}
+                  loop={true}
+                  muted={true}
+                  playsInline={true}
                   onError={() => handleVideoError(currentIndex)}
                   className="w-full h-full object-cover transition-opacity duration-2000"
                 >
