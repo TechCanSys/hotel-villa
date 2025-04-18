@@ -220,8 +220,10 @@ Message: ${formData.message}
           </div>
           
           <div className="lg:col-span-2 mt-8">
-            <h3 className="text-2xl font-bold text-hotel-text mb-6">{t("Nossa Localização", "Our Location")}</h3>
-            <Map />
+            <h3 className="text-2xl font-bold text-hotel-text mb-6">
+              {t("Nossa Localização", "Our Location")}
+            </h3>
+            <GoogleMap />
           </div>
         </div>
       </div>
