@@ -78,7 +78,7 @@ const AdminPricing = () => {
       item.id === editItem.id ? editItem : item
     ));
     
-    // Use t() for translations and provide both title and description
+    // Fix: Call toast with the correct format
     toast({
       title: t("Price Update", "Atualização de Preço"),
       description: t("Price updated successfully", "Preço atualizado com sucesso")
