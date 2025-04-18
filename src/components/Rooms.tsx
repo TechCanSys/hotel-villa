@@ -1,66 +1,73 @@
 
+import { useState, useEffect } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { supabase } from '@/integrations/supabase/client';
 import RoomCard from './RoomCard';
+import { Loader2 } from 'lucide-react';
+
+interface RoomData {
+  id: string;
+  title: string;
+  title_pt: string;
+  description: string;
+  description_pt: string;
+  price: number;
+  image: string;
+  amenities: string[];
+  amenities_pt: string[];
+  media: string[];
+}
 
 const Rooms = () => {
   const { language } = useLanguage();
+  const [rooms, setRooms] = useState<RoomData[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   
-  const rooms = [
-    {
-      name: language === 'en' ? "Presidential Room" : "Quarto Presidencial",
-      description: language === 'en' 
-        ? "Experience the height of luxury in our Presidential Room. With a spacious King Size bed and a private living room with comfortable sofas, perfect for small meetings or moments of relaxation. Elegantly decorated, this room offers stunning views and premium amenities for a truly exceptional stay."
-        : "Experimente o auge do luxo em nosso Quarto Presidencial. Com uma espaçosa cama King Size e uma sala de estar privativa com sofás confortáveis, perfeita para pequenas reuniões ou momentos de relaxamento. Decorado com elegância, este quarto oferece vistas deslumbrantes e comodidades premium para uma estadia verdadeiramente excepcional.",
-      price: "10.000,00MT",
-      images: [
-        {
-          url: "https://vazqzipehewahhcqtdfw.supabase.co/storage/v1/object/public/media/1743768194266-Pre.jpg",
-          alt: language === 'en' ? "Presidential Room - Living Room" : "Quarto Presidencial - Sala de Estar"
-        },
-        {
-          url: "https://vazqzipehewahhcqtdfw.supabase.co/storage/v1/object/public/media/1743770387004-Pre1.jpg",
-          alt: language === 'en' ? "Presidential Room - Room View" : "Quarto Presidencial - Vista do Quarto"
-        },
-        {
-          url: "https://vazqzipehewahhcqtdfw.supabase.co/storage/v1/object/public/media/1743770409827-Pre2.jpg",
-          alt: language === 'en' ? "Presidential Room - Entertainment Area" : "Quarto Presidencial - Área de Entretenimento"
-        },
-        {
-          url: "https://vazqzipehewahhcqtdfw.supabase.co/storage/v1/object/public/media/1743770463084-Pre3.jpg",
-          alt: language === 'en' ? "Presidential Room - Master Bedroom" : "Quarto Presidencial - Quarto Principal"
-        }
-      ],
-      amenities: language === 'en' 
-        ? ["King Size", "Meeting Room", "Wi-Fi", "Breakfast", "Minibar", "Flat Screen TV", "Air Conditioning", "Safe"]
-        : ["King Size", "Sala de Reunião", "Wi-Fi", "Pequeno Almoço", "Minibar", "TV de Tela Plana", "Ar Condicionado", "Cofre"],
-      featured: true
-    },
-    {
-      name: language === 'en' ? "Executive Room" : "Quarto Executivo",
-      description: language === 'en'
-        ? "Our Executive Room offers the perfect balance between comfort and functionality. Designed for discerning travelers, this elegant room features sophisticated decor, a spacious work area, and all the essential amenities to ensure a productive and pleasant stay."
-        : "Nosso Quarto Executivo oferece o equilíbrio perfeito entre conforto e funcionalidade. Projetado para viajantes exigentes, este quarto elegante apresenta uma decoração sofisticada, área de trabalho espaçosa e todas as comodidades essenciais para garantir uma estadia produtiva e agradável.",
-      price: "5.000,00MT",
-      images: [
-        {
-          url: "https://vazqzipehewahhcqtdfw.supabase.co/storage/v1/object/public/media/1743770673769-Exec2.jpg",
-          alt: language === 'en' ? "Executive Room - Overview" : "Quarto Executivo - Visão Geral"
-        },
-        {
-          url: "https://vazqzipehewahhcqtdfw.supabase.co/storage/v1/object/public/media/1743780610139-Exec.jpg",
-          alt: language === 'en' ? "Executive Room - Work Area" : "Quarto Executivo - Área de Trabalho"
-        },
-        {
-          url: "https://vazqzipehewahhcqtdfw.supabase.co/storage/v1/object/public/media/1743770645858-Exec1.jpg",
-          alt: language === 'en' ? "Executive Room - Bathroom" : "Quarto Executivo - Casa de Banho"
-        }
-      ],
-      amenities: language === 'en'
-        ? ["Queen Size", "Work Area", "Wi-Fi", "Breakfast", "Flat Screen TV", "Air Conditioning", "Safe"]
-        : ["Cama Queen Size", "Área de Trabalho", "Wi-Fi", "Pequeno Almoço", "TV de Tela Plana", "Ar Condicionado", "Cofre"],
-      promotion: language === 'en' ? "15% discount for 3+ night stays" : "15% de desconto para estadias de 3+ noites"
+  useEffect(() => {
+    fetchRooms();
+  }, []);
+  
+  const fetchRooms = async () => {
+    try {
+      setIsLoading(true);
+      const { data, error } = await supabase
+        .from('rooms')
+        .select('*')
+        .order('price', { ascending: false });
+        
+      if (error) throw error;
+      
+      // Transform the data to match the component's needs
+      const formattedRooms = data.map(room => ({
+        id: room.id,
+        title: room.title,
+        title_pt: room.title_pt,
+        description: room.description,
+        description_pt: room.description_pt,
+        price: room.price,
+        image: room.image,
+        amenities: Array.isArray(room.amenities) ? room.amenities : [],
+        amenities_pt: Array.isArray(room.amenities_pt) ? room.amenities_pt : [],
+        media: Array.isArray(room.media) ? room.media : [room.image],
+      }));
+      
+      setRooms(formattedRooms);
+    } catch (error) {
+      console.error('Error fetching rooms:', error);
+    } finally {
+      setIsLoading(false);
     }
-  ];
+  };
+
+  if (isLoading) {
+    return (
+      <section id="rooms" className="py-24 md:py-32">
+        <div className="container mx-auto px-4 flex justify-center">
+          <Loader2 className="h-10 w-10 animate-spin text-hotel" />
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="rooms" className="py-24 md:py-32">
@@ -80,16 +87,18 @@ const Rooms = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {rooms.map((room, index) => (
-            <div key={index} className="h-full flex">
+          {rooms.map((room) => (
+            <div key={room.id} className="h-full flex">
               <RoomCard
-                name={room.name}
-                description={room.description}
-                price={room.price}
-                images={room.images}
-                amenities={room.amenities}
-                promotion={room.promotion}
-                featured={room.featured}
+                name={language === 'en' ? room.title : room.title_pt}
+                description={language === 'en' ? room.description : room.description_pt}
+                price={`${room.price.toLocaleString('pt-MZ')}MT`}
+                images={room.media.map((url, index) => ({
+                  url,
+                  alt: `${language === 'en' ? room.title : room.title_pt} - Image ${index + 1}`
+                }))}
+                amenities={language === 'en' ? room.amenities : room.amenities_pt}
+                featured={index === 0} // First room is featured
               />
             </div>
           ))}

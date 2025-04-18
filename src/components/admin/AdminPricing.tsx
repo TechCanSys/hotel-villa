@@ -24,67 +24,78 @@ const AdminPricing = () => {
   const [editItem, setEditItem] = useState<PricingItem | null>(null);
   const { toast } = useToast();
 
-  // Dados de exemplo para simulação - em um ambiente de produção, estes viriam do Supabase
-  const dummyData: PricingItem[] = [
-    {
-      id: '1',
-      name: 'Standard Room Price',
-      name_pt: 'Preço do Quarto Standard',
-      price: 1500,
-      description: 'Base price for standard room',
-      description_pt: 'Preço base para quarto standard'
-    },
-    {
-      id: '2',
-      name: 'Deluxe Room Price',
-      name_pt: 'Preço do Quarto Deluxe',
-      price: 2500,
-      description: 'Base price for deluxe room',
-      description_pt: 'Preço base para quarto deluxe'
-    },
-    {
-      id: '3',
-      name: 'Suite Price',
-      name_pt: 'Preço da Suite',
-      price: 3500,
-      description: 'Base price for suite',
-      description_pt: 'Preço base para suite'
-    }
-  ];
-
   useEffect(() => {
     loadData();
   }, []);
 
-  const loadData = () => {
-    // Simulação de carregamento - em ambiente de produção, 
-    // isso buscaria dados reais do Supabase
+  const loadData = async () => {
     setIsLoading(true);
-    setTimeout(() => {
-      setItems(dummyData);
+    try {
+      // Fetch room data from Supabase
+      const { data: roomsData, error: roomsError } = await supabase
+        .from('rooms')
+        .select('id, title, title_pt, price, description, description_pt');
+      
+      if (roomsError) {
+        throw roomsError;
+      }
+      
+      // Transform room data to pricing items format
+      const pricingItems = roomsData.map(room => ({
+        id: room.id,
+        name: room.title,
+        name_pt: room.title_pt,
+        price: room.price,
+        description: room.description,
+        description_pt: room.description_pt
+      }));
+      
+      setItems(pricingItems);
+    } catch (error) {
+      console.error('Error loading data:', error);
+      toast({
+        title: t("Error", "Erro"),
+        description: t("Failed to load pricing data", "Falha ao carregar dados de preços")
+      });
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   const handleEdit = (item: PricingItem) => {
     setEditItem({...item});
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!editItem) return;
     
-    // Update items with the edited item
-    setItems(prev => prev.map(item => 
-      item.id === editItem.id ? editItem : item
-    ));
-    
-    // Fix: Call toast with the correct format
-    toast({
-      title: t("Price Update", "Atualização de Preço"),
-      description: t("Price updated successfully", "Preço atualizado com sucesso")
-    });
-    
-    setEditItem(null);
+    try {
+      // Update the room price in Supabase
+      const { error } = await supabase
+        .from('rooms')
+        .update({ price: editItem.price })
+        .eq('id', editItem.id);
+      
+      if (error) throw error;
+      
+      // Update local state
+      setItems(prev => prev.map(item => 
+        item.id === editItem.id ? editItem : item
+      ));
+      
+      toast({
+        title: t("Price Update", "Atualização de Preço"),
+        description: t("Price updated successfully", "Preço atualizado com sucesso")
+      });
+      
+      setEditItem(null);
+    } catch (error) {
+      console.error('Error updating price:', error);
+      toast({
+        title: t("Error", "Erro"),
+        description: t("Failed to update price", "Falha ao atualizar preço")
+      });
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
