@@ -124,17 +124,17 @@ const BookingDialog = ({
               <div className="bg-gray-50 p-4 rounded-lg">
                 <div className="flex justify-between mb-2">
                   <span className="text-gray-600">{t("Check-in", "Check-in")}</span>
-                  <span className="font-medium">{bookingData.checkInDate}</span>
+                  <span className="font-medium">{bookingData.checkInDate || t("Not specified", "Não especificado")}</span>
                 </div>
                 <div className="flex justify-between mb-2">
                   <span className="text-gray-600">{t("Check-out", "Check-out")}</span>
-                  <span className="font-medium">{bookingData.checkOutDate}</span>
+                  <span className="font-medium">{bookingData.checkOutDate || t("Not specified", "Não especificado")}</span>
                 </div>
                 <div className="flex justify-between mb-2">
                   <span className="text-gray-600">{t("Guests", "Hóspedes")}</span>
                   <span className="font-medium">{bookingData.guests}</span>
                 </div>
-                {bookingData.roomType !== 'Any' && (
+                {bookingData.roomType && bookingData.roomType !== 'Any' && (
                   <div className="flex justify-between">
                     <span className="text-gray-600">{t("Room Type", "Tipo de Quarto")}</span>
                     <span className="font-medium">{bookingData.roomType}</span>

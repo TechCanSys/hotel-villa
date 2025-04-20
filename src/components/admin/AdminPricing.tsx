@@ -55,7 +55,8 @@ const AdminPricing = () => {
       console.error('Error loading data:', error);
       toast({
         title: t("Error", "Erro"),
-        description: t("Failed to load pricing data", "Falha ao carregar dados de preços")
+        description: t("Failed to load pricing data", "Falha ao carregar dados de preços"),
+        variant: "destructive"
       });
     } finally {
       setIsLoading(false);
@@ -93,7 +94,8 @@ const AdminPricing = () => {
       console.error('Error updating price:', error);
       toast({
         title: t("Error", "Erro"),
-        description: t("Failed to update price", "Falha ao atualizar preço")
+        description: t("Failed to update price", "Falha ao atualizar preço"),
+        variant: "destructive"
       });
     }
   };

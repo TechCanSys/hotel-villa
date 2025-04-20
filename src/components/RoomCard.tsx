@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/dialog";
 import { Wifi, Coffee, Tv, Bath, BedDouble, Users, AirVent, Lock } from 'lucide-react';
 import BookingDialog from './hero/BookingDialog';
+import { useToast } from '@/components/ui/use-toast';
 
 interface RoomCardProps {
   room: {
@@ -50,6 +51,7 @@ const getAmenityIcon = (amenity: string) => {
 };
 
 const RoomCard = ({ room, images, promotion, featured = false, language }: RoomCardProps) => {
+  const { toast } = useToast();
   const name = language === 'en' ? room.title : room.title_pt;
   const description = language === 'en' ? room.description : room.description_pt;
   const price = room.price.toLocaleString('pt-MZ') + 'MZN';
@@ -75,7 +77,7 @@ const RoomCard = ({ room, images, promotion, featured = false, language }: RoomC
     specialRequests: ''
   });
 
-  const [showDateDialog, setShowDateDialog] = useState(false);
+  const [bookingSuccess, setBookingSuccess] = useState(false);
 
   const handleBookNow = () => {
     setShowBookingDialog(true);
@@ -94,10 +96,6 @@ const RoomCard = ({ room, images, promotion, featured = false, language }: RoomC
     return price * diffDays;
   };
 
-  const handleDateSubmit = () => {
-    setShowDateDialog(false);
-  };
-
   const handleManualNavigation = (index: number) => {
     setIsPaused(true);
     setCurrentImage(index);
@@ -108,7 +106,20 @@ const RoomCard = ({ room, images, promotion, featured = false, language }: RoomC
   };
 
   const onBookingSubmit = () => {
-    // This will be handled by the BookingDialog component
+    if (!formData.name || !formData.email) {
+      toast({
+        title: "Error",
+        description: "Please fill in all required fields",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    setBookingSuccess(true);
+    toast({
+      title: "Booking Successful",
+      description: "Your booking has been received. We will contact you shortly.",
+    });
   };
 
   const handleReset = () => {
@@ -125,6 +136,7 @@ const RoomCard = ({ room, images, promotion, featured = false, language }: RoomC
       phone: '',
       specialRequests: ''
     });
+    setBookingSuccess(false);
   };
 
   useEffect(() => {
@@ -136,11 +148,15 @@ const RoomCard = ({ room, images, promotion, featured = false, language }: RoomC
     return () => clearInterval(intervalRef.current);
   }, [isPaused, images.length]);
 
+  // Use default image if no images are provided
+  const displayImages = images.length > 0 ? images : [{ 
+    url: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
+    alt: 'Default room image'
+  }];
+
   return (
     <>
       <div className={`bg-white rounded-lg overflow-hidden shadow-lg flex flex-col h-full ${featured ? 'ring-2 ring-hotel' : ''}`}>
-        
-        
         {promotion && (
           <div className="bg-green-50 text-green-700 text-center py-2 font-semibold">
             {promotion}
@@ -149,26 +165,27 @@ const RoomCard = ({ room, images, promotion, featured = false, language }: RoomC
         
         <div className="relative h-96 overflow-hidden group">
           <img 
-            src={images[currentImage].url} 
-            alt={images[currentImage].alt} 
+            src={displayImages[currentImage].url} 
+            alt={displayImages[currentImage].alt} 
             className="w-full h-full object-cover transition-all duration-500 ease-in-out transform group-hover:scale-110"
-            style={{ opacity: 1 }}
           />
           
-          <div className="absolute top-1/2 transform -translate-y-1/2 left-0 right-0 flex justify-between px-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <button
-              onClick={() => handleManualNavigation(currentImage === 0 ? images.length - 1 : currentImage - 1)}
-              className="bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-all"
-            >
-              ←
-            </button>
-            <button
-              onClick={() => handleManualNavigation(currentImage === images.length - 1 ? 0 : currentImage + 1)}
-              className="bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-all"
-            >
-              →
-            </button>
-          </div>
+          {displayImages.length > 1 && (
+            <div className="absolute top-1/2 transform -translate-y-1/2 left-0 right-0 flex justify-between px-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <button
+                onClick={() => handleManualNavigation(currentImage === 0 ? displayImages.length - 1 : currentImage - 1)}
+                className="bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-all"
+              >
+                ←
+              </button>
+              <button
+                onClick={() => handleManualNavigation(currentImage === displayImages.length - 1 ? 0 : currentImage + 1)}
+                className="bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-all"
+              >
+                →
+              </button>
+            </div>
+          )}
         </div>
         
         <div className="p-6 flex-1 flex flex-col">
@@ -176,8 +193,8 @@ const RoomCard = ({ room, images, promotion, featured = false, language }: RoomC
           <p className="text-gray-600 mb-4 line-clamp-1 h-6 overflow-hidden">{description}</p>
           
           <div className="flex flex-wrap gap-3 mb-4 h-16 overflow-hidden">
-            {amenities.slice(0, 4).map((amenity, index) => (
-              <div key={index} className="flex items-center text-gray-700">
+            {amenities && amenities.slice(0, 4).map((amenity, idx) => (
+              <div key={idx} className="flex items-center text-gray-700">
                 {getAmenityIcon(amenity)}
                 <span className="text-sm ml-1">{amenity}</span>
               </div>
@@ -205,22 +222,24 @@ const RoomCard = ({ room, images, promotion, featured = false, language }: RoomC
                   <div>
                     <div className="rounded-lg overflow-hidden mb-4">
                       <img 
-                        src={images[currentImage].url} 
-                        alt={images[currentImage].alt} 
+                        src={displayImages[currentImage].url} 
+                        alt={displayImages[currentImage].alt} 
                         className="w-full h-64 object-cover"
                       />
                     </div>
-                    <div className="grid grid-cols-3 gap-1 sm:gap-2">
-                      {images.map((image, idx) => (
-                        <img 
-                          key={idx}
-                          src={image.url} 
-                          alt={image.alt} 
-                          className={`h-20 w-full object-cover rounded cursor-pointer ${currentImage === idx ? 'ring-2 ring-hotel' : ''}`}
-                          onClick={() => setCurrentImage(idx)}
-                        />
-                      ))}
-                    </div>
+                    {displayImages.length > 1 && (
+                      <div className="grid grid-cols-3 gap-1 sm:gap-2">
+                        {displayImages.map((image, idx) => (
+                          <img 
+                            key={idx}
+                            src={image.url} 
+                            alt={image.alt} 
+                            className={`h-20 w-full object-cover rounded cursor-pointer ${currentImage === idx ? 'ring-2 ring-hotel' : ''}`}
+                            onClick={() => setCurrentImage(idx)}
+                          />
+                        ))}
+                      </div>
+                    )}
                   </div>
                   
                   <div>
@@ -229,7 +248,7 @@ const RoomCard = ({ room, images, promotion, featured = false, language }: RoomC
                     <div className="mb-4">
                       <h4 className="font-bold text-hotel-text mb-2">Comodidades</h4>
                       <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        {amenities.map((amenity, idx) => (
+                        {amenities && amenities.map((amenity, idx) => (
                           <li key={idx} className="flex items-center text-gray-700">
                             <span className="w-2 h-2 bg-hotel rounded-full mr-2"></span>
                             {amenity}
@@ -267,53 +286,6 @@ const RoomCard = ({ room, images, promotion, featured = false, language }: RoomC
         </div>
       </div>
 
-      <Dialog open={showDateDialog} onOpenChange={setShowDateDialog}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-hotel-text">Selecione as Datas</DialogTitle>
-          </DialogHeader>
-          
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-1 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Check-in</label>
-                <input 
-                  type="date" 
-                  className="w-full p-2 border rounded"
-                  value={bookingData.checkInDate}
-                  onChange={(e) => setBookingData({...bookingData, checkInDate: e.target.value})}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Check-out</label>
-                <input 
-                  type="date" 
-                  className="w-full p-2 border rounded"
-                  value={bookingData.checkOutDate}
-                  onChange={(e) => setBookingData({...bookingData, checkOutDate: e.target.value})}
-                />
-              </div>
-            </div>
-          </div>
-          
-          <div className="flex justify-end gap-2">
-            <Button 
-              variant="outline" 
-              onClick={() => setShowDateDialog(false)}
-            >
-              Cancelar
-            </Button>
-            <Button 
-              className="bg-hotel hover:bg-hotel/90 text-white"
-              onClick={handleDateSubmit}
-              disabled={!bookingData.checkInDate || !bookingData.checkOutDate}
-            >
-              Continuar
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
       <BookingDialog
         isOpen={showBookingDialog}
         onClose={() => setShowBookingDialog(false)}
@@ -326,7 +298,7 @@ const RoomCard = ({ room, images, promotion, featured = false, language }: RoomC
           setSpecialRequests: (value) => setFormData(prev => ({ ...prev, specialRequests: value })),
         }}
         onSubmit={onBookingSubmit}
-        bookingSuccess={false}
+        bookingSuccess={bookingSuccess}
         onReset={handleReset}
       />
     </>
@@ -334,4 +306,3 @@ const RoomCard = ({ room, images, promotion, featured = false, language }: RoomC
 };
 
 export default RoomCard;
-
