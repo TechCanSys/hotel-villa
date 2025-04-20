@@ -40,6 +40,20 @@ const BookingForm = ({
       });
       return;
     }
+    
+    // Validate that check-out date is after check-in date
+    const checkIn = new Date(checkInDate);
+    const checkOut = new Date(checkOutDate);
+    
+    if (checkOut <= checkIn) {
+      toast({
+        title: t("Error", "Erro"),
+        description: t("Check-out date must be after check-in date", "A data de check-out deve ser posterior à data de check-in"),
+        variant: "destructive",
+      });
+      return;
+    }
+    
     onCheckAvailability();
   };
 
@@ -56,6 +70,7 @@ const BookingForm = ({
             value={checkInDate}
             onChange={(e) => setCheckInDate(e.target.value)}
             className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-hotel"
+            min={new Date().toISOString().split('T')[0]} // Prevent past dates
           />
         </div>
         <div className="flex flex-col">
@@ -68,6 +83,7 @@ const BookingForm = ({
             value={checkOutDate}
             onChange={(e) => setCheckOutDate(e.target.value)}
             className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-hotel"
+            min={checkInDate || new Date().toISOString().split('T')[0]} // Ensure check-out is after check-in
           />
         </div>
         <div className="flex flex-col">
